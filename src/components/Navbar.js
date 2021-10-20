@@ -2,7 +2,7 @@ import logo from '../assets/images/logo-dewe.png';
 function Navbar() {
   return (
     <div>
-      <nav className="flex justify-center bg-navbar bg-no-repeat bg-auto bg-center  text-white">
+      <nav id="navbar" className="flex top-0 fixed w-full justify-center bg-transparent bg-no-repeat bg-auto bg-center text-white z-50">
         <ul className="container flex justify-between">
           <div>
             <li>
@@ -13,14 +13,10 @@ function Navbar() {
           </div>
           <div className="flex items-center space-x-4 px-4">
             <li>
-              <a href="/" className="block px-8 py-1 rounded-md border">
-                Login
-              </a>
+              <button className="block hover:bg-green-800 px-8 py-1 rounded-md border transition duration-400 ease-out">Login</button>
             </li>
             <li>
-              <a href="/" className="block  px-6 py-1 rounded-md bg-yellow-400">
-                Register
-              </a>
+              <button className="block  px-6 py-1 rounded-md bg-yellow-400 hover:bg-yellow-500 transition duration-400 ease-out">Register</button>
             </li>
           </div>
         </ul>
