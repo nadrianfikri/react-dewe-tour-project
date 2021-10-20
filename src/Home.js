@@ -1,12 +1,14 @@
+import Content from './components/Content';
 import Hero from './components/Hero';
 import Navbar from './components/Navbar';
 
 function Home() {
   return (
-    <div>
+    <>
       <Navbar />
       <Hero />
-    </div>
+      <Content />
+    </>
   );
 }
 

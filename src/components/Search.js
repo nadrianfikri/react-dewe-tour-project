@@ -1,8 +1,8 @@
 function Search() {
   return (
     <div className="pt-10">
-      <form className="container flex flex-col space-y-4" action="#">
-        <label className="" for="seacrhBar">
+      <form className="flex flex-col space-y-4" action="#">
+        <label className="text-lg" for="seacrhBar">
           Find great places to holiday
         </label>
         <div className=" flex flex-row">
