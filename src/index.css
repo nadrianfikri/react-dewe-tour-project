@@ -2,10 +2,6 @@
 @tailwind components;
 @tailwind utilities;
 
-body {
-  height: 5000px;
-  background-color: #eee;
-}
 /* * {
   border: 1px solid grey;
 } */

@@ -1,0 +1,44 @@
+[
+  {
+    "name": "6D/4N Fun Tassie Vacation ...",
+    "capacity": "12/15",
+    "price": 12398000,
+    "country": "Australia",
+    "image": "..."
+  },
+  {
+    "name": "6D/4N Exciting Summer in ...",
+    "capacity": "14/15",
+    "price": 10288000,
+    "country": "South Korea",
+    "image": "..."
+  },
+  {
+    "name": "8D/6N Wonderful Autumn ...",
+    "capacity": "10/15",
+    "price": 28999000,
+    "country": "Japan",
+    "image": "..."
+  },
+  {
+    "name": "4D/3N Overland Jakarta B ...",
+    "capacity": "8/10",
+    "price": 3188000,
+    "country": "Indonesia",
+    "image": "..."
+  },
+  {
+    "name": "4D/3N Labuan Bajo Delight",
+    "capacity": "14/15",
+    "price": 10488000,
+    "country": "Indonesia",
+    "image": "..."
+  },
+  {
+    "name": "5D/4N Magic Tokyo Fun",
+    "capacity": "10/15",
+    "price": 11188000,
+    "country": "Japan",
+    "image": "..."
+  }
+]
