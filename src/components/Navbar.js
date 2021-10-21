@@ -1,18 +1,22 @@
 import logo from '../assets/images/logo-dewe.png';
 
-function Navbar() {
+function Navbar(props) {
   window.onscroll = function () {
     scrollFunction();
   };
   function scrollFunction() {
-    if (document.body.scrollTop > 80 || document.documentElement.scrollTop > 80) {
-      document.querySelector('#navbar').classList.add('bg-navbar');
+    if (document.querySelector('#navbar').classList.contains('navbar')) {
+      if (document.body.scrollTop > 80 || document.documentElement.scrollTop > 80) {
+        document.querySelector('#navbar').classList.add('bg-navbar');
+      } else {
+        document.querySelector('#navbar').classList.remove('bg-navbar');
+      }
     } else {
-      document.querySelector('#navbar').classList.remove('bg-navbar');
+      document.querySelector('#navbar').classList.add('bg-navbar');
     }
   }
   return (
-    <nav id="navbar" className="flex top-0 fixed w-full justify-center bg-transparent bg-no-repeat bg-auto bg-center text-white z-50 ">
+    <nav id="navbar" className={`${props.class} flex top-0 fixed w-full ${props.bg} justify-center bg-no-repeat bg-auto bg-center text-white z-50 `}>
       <ul className="container px-8 flex justify-between">
         <div>
           <li>
