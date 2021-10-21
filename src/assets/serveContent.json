@@ -1,0 +1,22 @@
+[
+  {
+    "title": "Best Price Guarantee",
+    "icon": "/assets/icons/guarantee 1.svg",
+    "description": "A small river named Duren flows by their place and supplies"
+  },
+  {
+    "title": "Travellers Love Us",
+    "icon": "/assets/icons/heart 1.svg",
+    "description": "A small river named Duren flows by their place and supplies"
+  },
+  {
+    "title": "Best Travel Agent",
+    "icon": "/assets/icons/agent 1.svg",
+    "description": "A small river named Duren flows by their place and supplies"
+  },
+  {
+    "title": "Our Dedicated Support",
+    "icon": "/assets/icons/support 1.svg",
+    "description": "A small river named Duren flows by their place and supplies"
+  }
+]

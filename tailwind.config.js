@@ -13,6 +13,12 @@ module.exports = {
       fontSize: {
         '6xl': '4rem',
       },
+      width: {
+        350: '350px',
+      },
+      height: {
+        350: '350px',
+      },
     },
   },
   variants: {
