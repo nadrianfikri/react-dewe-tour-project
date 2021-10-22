@@ -1,10 +1,13 @@
-import Home from './pages/Home';
+// import Login from './pages/Auth/Login';
+// import Regist from './pages/Auth/Regist';
+
+import Payment from './pages/Payment';
 
 function App() {
   return (
-    <div>
-      <Home />
-    </div>
+    <>
+      <Payment />
+    </>
   );
 }
 
