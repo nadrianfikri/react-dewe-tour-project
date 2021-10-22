@@ -4,9 +4,9 @@ import { Table, THeader, TBody, TData, TFoot } from '../components/Table';
 
 function Payment() {
   return (
-    <div className="pt-36 bg-gray-100">
+    <div className="pt-36 bg-gray-100 ">
       <Navbar bg="bg-navbar" class="none" />
-      <main className="container mx-auto overflow-auto">
+      <main className="container mx-auto overflow-auto pb-36">
         <div className="flex flex-col gap-2 py-2 px-6 bg-white border-2  border-gray-300 rounded-md">
           <section className="flex justify-between items-center ">
             <div>
