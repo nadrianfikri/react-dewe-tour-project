@@ -1,7 +1,20 @@
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
+import { useState } from 'react';
 
 function DetailTrip() {
+  const [count, setCount] = useState(1);
+
+  const increment = () => {
+    // set new value to state
+    setCount((prevState) => prevState + 1);
+  };
+
+  const decrement = () => {
+    // set new value to state
+    setCount(count <= 0 ? count : count - 1);
+  };
+
   return (
     <div className="pt-36 bg-gray-100">
       <Navbar bg="bg-navbar" class="none" />
@@ -42,6 +55,35 @@ function DetailTrip() {
         <Article>
           <Header title="Description" />
           <ArticleDesc desc="Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.  It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum." />
+        </Article>
+
+        <Article>
+          <form action="/">
+            <div className="form-group border-b-2 flex justify-between items-center font-bold text-2xl">
+              <label className="flex-1 text-yellow-400" htmlFor="qty">
+                IDR 12.000.000<span className="text-black"> / Person</span>
+              </label>
+              <div className="flex flex-0 gap-2">
+                <button type="button" onClick={decrement}>
+                  <img src="/assets/icons/Minus.svg" alt="icon" />
+                </button>
+                <input type="number" name="qty" value={count} readonly className="py-4 focus:outline-none bg-transparent text-center font-bold w-10 text-lg" />
+                <button type="button" onClick={increment}>
+                  <img src="/assets/icons/Plus.svg" alt="icon" />
+                </button>
+              </div>
+            </div>
+            <div className="form-group border-b-2 text-yellow-400 flex justify-between items-center font-bold text-2xl">
+              <label className="text-black" htmlFor="qty">
+                Total:
+              </label>
+              <p className="py-4 focus:outline-none bg-transparent text-right font-bold ">IDR 12.000.000</p>
+              <input type="number" hidden name="total" value="12000000" />
+            </div>
+            <div className="form-group m-2 flex justify-end font-bold text-2xl">
+              <input type="submit" value="BOOK NOW" className=" mt-4 py-2 px-10 bg-yellow-400 text-right text-white font-bold text-lg rounded-md hover:bg-yellow-500 cursor-pointer " />
+            </div>
+          </form>
         </Article>
       </main>
       <Footer />
