@@ -1,12 +1,11 @@
 // import Login from './pages/Auth/Login';
 // import Regist from './pages/Auth/Regist';
-
-import Payment from './pages/Payment';
+import Profile from './pages/Profile';
 
 function App() {
   return (
     <>
-      <Payment />
+      <Profile />
     </>
   );
 }

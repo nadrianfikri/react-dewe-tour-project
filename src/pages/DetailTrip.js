@@ -93,7 +93,7 @@ function DetailTrip() {
 function Article({ children }) {
   return <article className="flex flex-col gap-3 p-4 overflow-auto">{children}</article>;
 }
-function Header(props) {
+export function Header(props) {
   return <header className="text-lg font-extrabold">{props.title}</header>;
 }
 function ArticleBody(props) {
