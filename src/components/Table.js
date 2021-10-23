@@ -1,3 +1,6 @@
+function Table2({ children }) {
+  return <table className="table-auto text-left overflow-auto bg-white">{children}</table>;
+}
 function Table({ children }) {
   return <table className="table-auto text-left overflow-auto">{children}</table>;
 }
@@ -16,6 +19,23 @@ function TFoot(props) {
     </tfoot>
   );
 }
+function TData2(props) {
+  return (
+    <tr className="border-b border-grey-600">
+      <td className="px-2">{props.no}</td>
+      <td>{props.user}</td>
+      <td>{props.trip}</td>
+      <td>{props.proofTF}</td>
+      <td className={`font-bold ${props.statusStyle} py-4`}>{props.status}</td>
+      <td>
+        <a href="/">
+          <img src="/assets/icons/search.svg" alt="icon" />
+        </a>
+      </td>
+    </tr>
+  );
+}
+
 function TData(props) {
   return (
     <tr className="border-b border-grey-600 text-gray-400">
@@ -37,12 +57,14 @@ function THeader(props) {
   return (
     <thead className="border-b border-grey-600 ">
       <tr>
-        <th>{props.col1}</th>
+        <th className="py-2 px-2">{props.col1}</th>
         <th>{props.col2}</th>
         <th>{props.col3}</th>
         <th>{props.col4}</th>
+        <th>{props.col5}</th>
+        <th>{props.col6}</th>
       </tr>
     </thead>
   );
 }
-export { Table, THeader, TBody, TData, TFoot };
+export { Table, Table2, THeader, TBody, TData, TData2, TFoot };
