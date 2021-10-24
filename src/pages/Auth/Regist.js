@@ -8,12 +8,12 @@ function Regist() {
         <ModalTitle title="Register" />
         <ModalBody>
           <Form>
-            <FormGroup labelFor="name" labelName="Full Name" typeInput="name" inputName="name" />
-            <FormGroup labelFor="email" labelName="Email" typeInput="email" inputName="email" />
-            <FormGroup labelFor="password" labelName="Password" typeInput="password" inputName="password" />
-            <FormGroup labelFor="phone" labelName="Phone" typeInput="number" inputName="phone" />
+            <FormGroup labelFor="name" labelName="Full Name" typeInput="name" name="name" />
+            <FormGroup labelFor="email" labelName="Email" typeInput="email" name="email" />
+            <FormGroup labelFor="password" labelName="Password" typeInput="password" name="password" />
+            <FormGroup labelFor="phone" labelName="Phone" typeInput="number" name="phone" />
             <InputSubmit value="Register" />
-            <DirectText route="/" desc="Already have an account? " textLink="Login" />
+            <DirectText route="/login" desc="Already have an account? " textLink="Login" />
           </Form>
         </ModalBody>
       </Modal>

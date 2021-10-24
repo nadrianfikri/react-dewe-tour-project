@@ -1,11 +1,16 @@
 import img1 from '../assets/images/palm-2.png';
 import img2 from '../assets/images/hibiscus 2.png';
+import { useHistory } from 'react-router-dom';
 
 function ModalTitle(props) {
+  const history = useHistory();
+
   return (
     <div className="modal-title my-10">
       <h1 className="text-center font-bold text-4xl">{props.title}</h1>
-      <button class="absolute top-12 right-10 text-2xl text-gray-400 close-modal z-50">x</button>
+      <button onClick={() => history.goBack()} class="absolute top-12 right-10 text-2xl text-gray-400 close-modal z-50 transform rotate-45">
+        +
+      </button>
       <img src={img1} alt="img" className="absolute top-0 left-0" />
       <img src={img2} alt="img" className="absolute top-0 right-0" />
     </div>

@@ -8,10 +8,10 @@ function Login() {
         <ModalTitle title="Login" />
         <ModalBody>
           <Form>
-            <FormGroup labelFor="email" labelName="Email" typeInput="email" inputName="email" />
-            <FormGroup labelFor="password" labelName="Password" typeInput="password" inputName="password" />
+            <FormGroup labelFor="email" labelName="Email" typeInput="email" name="email" />
+            <FormGroup labelFor="password" labelName="Password" typeInput="password" name="password" />
             <InputSubmit value="Login" />
-            <DirectText route="/" desc="Don't have an account? Klik " textLink="Here" />
+            <DirectText route="/register" desc="Don't have an account? Klik " textLink="Here" />
           </Form>
         </ModalBody>
       </Modal>
