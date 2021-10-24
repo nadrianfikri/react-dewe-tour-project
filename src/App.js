@@ -1,5 +1,6 @@
 import { Route, Switch } from 'react-router-dom';
 
+import PrivateRoute from './components/PrivateRoute';
 import Home from './pages/Home';
 import Login from './pages/Auth/Login';
 import Regist from './pages/Auth/Regist';
@@ -17,12 +18,12 @@ function App() {
         <Route exact path="/" component={Home} />
         <Route exact path="/login" component={Login} />
         <Route exact path="/register" component={Regist} />
-        <Route exact path="/profile" component={Profile} />
-        <Route exact path="/payment" component={Payment} />
-        <Route exact path="/income-trip" component={IncomeTrip} />
-        <Route exact path="/add-trip" component={AddTrip} />
-        <Route exact path="/list-transaction" component={ListTransaction} />
-        <Route exact path="/detail-trip/:id" component={DetailTrip} />
+        <PrivateRoute exact path="/profile" component={Profile} />
+        <PrivateRoute exact path="/payment" component={Payment} />
+        <PrivateRoute exact path="/income-trip" component={IncomeTrip} />
+        <PrivateRoute exact path="/add-trip" component={AddTrip} />
+        <PrivateRoute exact path="/list-transaction" component={ListTransaction} />
+        <PrivateRoute exact path="/detail-trip/:id" component={DetailTrip} />
       </Switch>
     </>
   );

@@ -11,7 +11,7 @@ function FormGroup(props) {
       <label htmlFor={props.labelFor} className="font-bold text-lg">
         {props.labelName}
       </label>
-      <input type={props.typeInput} id={props.id} name={props.name} value={props.value} className="focus:outline-none focus:shadow-md p-2 bg-gray-200 rounded-md border-2 border-gray-300" />
+      <input type={props.typeInput} id={props.id} name={props.name} value={props.value} className="focus:outline-none focus:shadow-md p-2 bg-gray-200 rounded-md border-2 border-gray-300" required />
     </div>
   );
 }
