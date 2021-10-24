@@ -7,7 +7,7 @@ import Footer from '../components/Footer';
 function Profile() {
   return (
     <div className="pt-36 bg-gray-100 ">
-      <Navbar />
+      <Navbar class="bg-navbar" />
       <main className="md:container mx-auto overflow-auto pb-36">
         <section className="px-2 sm:container mx-auto md:w-max pb-10 ">
           <div className="flex flex-col-reverse md:flex-row gap-4 md:gap-24 bg-white p-6 rounded-md shadow">

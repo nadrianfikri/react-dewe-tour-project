@@ -17,7 +17,7 @@ function FormGroup(props) {
 }
 function DoubleInput(props) {
   return (
-    <div className="form-group space-y-2 flex flex-col">
+    <div className="form-group overflow-auto  space-y-2 flex flex-col">
       <label htmlFor={props.labelFor} className="font-bold text-lg">
         {props.labelName}
       </label>
@@ -63,7 +63,7 @@ function InputSubmit(props) {
   return (
     // flex-col
     <div className="form-group space-y-2 text-center">
-      <input value={props.value} type="submit" name="submit" className={`font-bold p-2 bg-yellow-400 hover:bg-yellow-500 text-white text-lg rounded-md cursor-pointer px-20 w-${props.w}`} />
+      <input onClick={props.submit} value={props.value} type="submit" name="submit" className={`font-bold p-2 bg-yellow-400 hover:bg-yellow-500 text-white text-lg rounded-md cursor-pointer px-20 w-${props.w}`} />
     </div>
   );
 }

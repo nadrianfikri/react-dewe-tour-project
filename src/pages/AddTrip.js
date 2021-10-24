@@ -6,11 +6,11 @@ function AddTrip() {
     <div className="pt-36 bg-gray-100 ">
       <Navbar class="bg-navbar" />
 
-      <main className="container mx-auto overflow-auto pb-36 ">
+      <main className="container mx-auto pb-36 ">
         <div className="pb-10">
           <h1 className="text-4xl font-bold">Income Trip</h1>
         </div>
-        <div>
+        <div className="overflow-auto">
           <Form action="/">
             <FormGroup labelFor="title" labelName="Title Trip" typeInput="text" name="title" id="title" />
             <Select labelFor="country" labelName="Country" typeInput="text" name="country" id="country" />

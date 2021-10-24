@@ -20,6 +20,10 @@ function TFoot(props) {
   );
 }
 function TData2(props) {
+  const showModal = () => {
+    document.querySelector('#modalApprove').classList.toggle('hidden');
+  };
+
   return (
     <tr className="border-b border-grey-600">
       <td className="px-2">{props.no}</td>
@@ -28,9 +32,9 @@ function TData2(props) {
       <td>{props.proofTF}</td>
       <td className={`font-bold ${props.statusStyle} py-4`}>{props.status}</td>
       <td>
-        <a href="/">
+        <button onClick={showModal} type="button">
           <img src="/assets/icons/search.svg" alt="icon" />
-        </a>
+        </button>
       </td>
     </tr>
   );

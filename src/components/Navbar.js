@@ -4,16 +4,27 @@ import { Link } from 'react-router-dom';
 
 import Login from '../pages/Auth/Login';
 import Regist from '../pages/Auth/Regist';
+import Dropdown, { DropdownItem } from './Dropdown';
 import { AuthContext } from '../context/authContext';
 
 function Navbar(props) {
-  const { state } = useContext(AuthContext);
+  const { state, dispatch } = useContext(AuthContext);
+  const isAdmin = false;
+
+  const handleLogout = () => {
+    dispatch({
+      type: 'LOGOUT',
+    });
+  };
 
   const handleLoginModal = () => {
     document.querySelector('#modalLogin').classList.remove('hidden');
   };
   const handleRegistModal = () => {
     document.querySelector('#modalRegist').classList.remove('hidden');
+  };
+  const showDropdown = () => {
+    document.querySelector('#dropdown').classList.toggle('hidden');
   };
 
   window.onscroll = function () {
@@ -44,10 +55,43 @@ function Navbar(props) {
           </div>
           <div className="flex items-center space-x-4 px-4">
             {state.isLogin ? (
-              <li className="pr-6">
-                <button>
+              <li className="relative pr-6">
+                <button onClick={showDropdown}>
                   <img className="w-50 h-50 object-cover rounded-full border-2 border-yellow-400" src="/assets/images/photo.png" alt="avatar" />
                 </button>
+                <Dropdown click={handleLogout}>
+                  {isAdmin ? (
+                    <>
+                      <DropdownItem>
+                        <img src="/assets/icons/journey 1.svg" alt="" />
+                        <Link to="/income-trip" className="text-lg font-bold">
+                          Trip
+                        </Link>
+                      </DropdownItem>
+                      <DropdownItem>
+                        <img src="/assets/icons/bill.svg" alt="" />
+                        <Link to="/list-transaction" className="text-lg font-bold">
+                          Transaction
+                        </Link>
+                      </DropdownItem>
+                    </>
+                  ) : (
+                    <>
+                      <DropdownItem>
+                        <img src="/assets/icons/user.svg" alt="" />
+                        <Link to="/profile" className="text-lg font-bold">
+                          Profile
+                        </Link>
+                      </DropdownItem>
+                      <DropdownItem>
+                        <img src="/assets/icons/bill.svg" alt="" />
+                        <Link to="/payment" className="text-lg font-bold">
+                          Pay
+                        </Link>
+                      </DropdownItem>
+                    </>
+                  )}
+                </Dropdown>
               </li>
             ) : (
               <>

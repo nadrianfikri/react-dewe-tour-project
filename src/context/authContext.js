@@ -1,7 +1,7 @@
 import { createContext, useReducer } from 'react';
 
 const initialValue = {
-  isLogin: true,
+  isLogin: false,
   user: {
     email: '',
     password: '',
