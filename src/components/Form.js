@@ -1,5 +1,3 @@
-import { Link } from 'react-router-dom';
-
 function Form(props) {
   return (
     <form action={props.action} method={props.method} enctype={props.enctype} className="space-y-6 ">
@@ -87,9 +85,9 @@ function DirectText(props) {
     <div className="form-group space-y-2 flex flex-col ">
       <p className="text-center text-gray-400">
         {props.desc}
-        <Link to={props.route} className="font-bold">
+        <button type="button" onClick={props.click} className="font-bold">
           {props.textLink}
-        </Link>
+        </button>
       </p>
     </div>
   );

@@ -2,9 +2,13 @@ import { Modal, ModalTitle, ModalBody } from '../../components/Modal';
 import { Form, FormGroup, InputSubmit, DirectText } from '../../components/Form';
 
 function Regist() {
+  const handleRegistModal = () => {
+    document.querySelector('#modalRegist').classList.add('hidden');
+    document.querySelector('#modalLogin').classList.remove('hidden');
+  };
   return (
     <>
-      <Modal>
+      <Modal id="modalRegist">
         <ModalTitle title="Register" />
         <ModalBody>
           <Form>
@@ -12,8 +16,8 @@ function Regist() {
             <FormGroup labelFor="email" labelName="Email" typeInput="email" name="email" />
             <FormGroup labelFor="password" labelName="Password" typeInput="password" name="password" />
             <FormGroup labelFor="phone" labelName="Phone" typeInput="number" name="phone" />
-            <InputSubmit value="Register" />
-            <DirectText route="/login" desc="Already have an account? " textLink="Login" />
+            <InputSubmit value="Register" w="full" />
+            <DirectText click={handleRegistModal} desc="Already have an account? " textLink="Login" />
           </Form>
         </ModalBody>
       </Modal>

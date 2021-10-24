@@ -17,7 +17,7 @@ function Content() {
         </div>
         <div className="group-content container flex justify-center items-center flex-wrap">
           {dataDestinations.map((data) => (
-            <Card2 title={data.name} img={data.image} capacity={data.capacity} price={data.price} country={data.country} />
+            <Card2 id={data.id} title={data.name} img={data.thumbnailImage} capacity={data.capacity} price={data.price} country={data.country} />
           ))}
         </div>
       </div>

@@ -3,18 +3,19 @@
 // import Profile from './pages/Profile';
 import { Route, Switch } from 'react-router-dom';
 import Home from './pages/Home';
+import DetailTrip from './pages/DetailTrip';
 import Login from './pages/Auth/Login';
 import Regist from './pages/Auth/Regist';
 
 function App() {
   return (
     <>
-      <Home />
       <Switch>
-        {/* <Route exact path="/" component={Home} /> */}
+        <Route exact path="/" component={Home} />
         {/* <Route path="/profile" component={Profile} /> */}
-        <Route path="/login" component={Login} />
-        <Route path="/register" component={Regist} />
+        <Route exact path="/login" component={Login} />
+        <Route exact path="/register" component={Regist} />
+        <Route exact path="/detail-trip/:id" component={DetailTrip} />
       </Switch>
     </>
   );

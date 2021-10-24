@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom';
 function Card1(props) {
   return (
     <div id="card" className="text-center rounded-sm bg-white p-4 mx-8 mb-8 w-64 h-80">
@@ -14,8 +15,6 @@ function Card1(props) {
 function Card2(props) {
   const rupiah = (number) => {
     return new Intl.NumberFormat('id-ID', {
-      style: 'currency',
-      currency: 'IDR',
       minimumFractionDigits: 0,
     }).format(number);
   };
@@ -25,9 +24,14 @@ function Card2(props) {
         <img className="rounded-md" src={props.img} alt="img" />
         <p className="absolute top-3 rounded-bl-md rounded-tl-md right-0 px-3 py-1 bg-white text-sm">{props.capacity}</p>
       </div>
-      <div className="card-title my-4 font-medium text-xl">{props.title}</div>
+      <div className="card-title my-4 font-medium text-xl">
+        <Link to={`/detail-trip/${props.id}`}>{props.title}</Link>
+      </div>
       <div className="card-body flex justify-between text-lg">
-        <p className="text-yellow-400 font-black">{rupiah(props.price)}</p>
+        <p className="text-yellow-400 font-black">
+          <span className="pr-2">IDR.</span>
+          {rupiah(props.price)}
+        </p>
         <p className="text-gray-400 font-semibold">{props.country}</p>
       </div>
     </div>
