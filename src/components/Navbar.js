@@ -55,7 +55,7 @@ function Navbar(props) {
           </div>
           <div className="flex items-center space-x-4 px-4">
             {state.isLogin ? (
-              <li className="relative pr-6">
+              <li className="relative pr-6 mt-2">
                 <button onClick={showDropdown}>
                   <img className="w-50 h-50 object-cover rounded-full border-2 border-yellow-400" src="/assets/images/photo.png" alt="avatar" />
                 </button>

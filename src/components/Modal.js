@@ -13,7 +13,7 @@ function ModalTitle(props) {
   return (
     <div className="modal-title my-10">
       <h1 className="text-center font-bold text-4xl">{props.title}</h1>
-      <button onClick={handleClose} class="absolute top-12 right-10 text-2xl text-gray-400 close-modal z-50 transform rotate-45">
+      <button onClick={handleClose} className="absolute top-12 right-10 text-2xl text-gray-400 close-modal z-50 transform rotate-45">
         +
       </button>
       <img src={img1} alt="img" className="absolute top-0 left-0" />
