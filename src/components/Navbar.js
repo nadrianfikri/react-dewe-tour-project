@@ -9,7 +9,10 @@ import { AuthContext } from '../context/authContext';
 
 function Navbar(props) {
   const { state, dispatch } = useContext(AuthContext);
-  const isAdmin = false;
+  let isAdmin = false;
+  if (state.user.status === 1) {
+    isAdmin = true;
+  }
 
   const handleLogout = () => {
     dispatch({
@@ -18,10 +21,10 @@ function Navbar(props) {
   };
 
   const handleLoginModal = () => {
-    document.querySelector('#modalLogin').classList.remove('hidden');
+    document.querySelector('#modalLogin').classList.toggle('hidden');
   };
   const handleRegistModal = () => {
-    document.querySelector('#modalRegist').classList.remove('hidden');
+    document.querySelector('#modalRegist').classList.toggle('hidden');
   };
   const showDropdown = () => {
     document.querySelector('#dropdown').classList.toggle('hidden');

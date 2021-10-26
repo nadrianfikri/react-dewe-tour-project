@@ -1,6 +1,7 @@
-import { Route, Switch } from 'react-router-dom';
+import { Route, Switch, Redirect } from 'react-router-dom';
+import { useContext } from 'react';
+import { AuthContext } from './context/authContext';
 
-import PrivateRoute from './components/PrivateRoute';
 import Home from './pages/Home';
 import Login from './pages/Auth/Login';
 import Regist from './pages/Auth/Regist';
@@ -12,18 +13,42 @@ import ListTransaction from './pages/ListTransaction';
 import AddTrip from './pages/AddTrip';
 
 function App() {
+  const { state } = useContext(AuthContext);
+  // const user = JSON.parse(localStorage.getItem('user'));
+
   return (
     <>
       <Switch>
-        <Route exact path="/" component={Home} />
-        <Route exact path="/login" component={Login} />
-        <Route exact path="/register" component={Regist} />
-        <Route exact path="/detail-trip/:id" component={DetailTrip} />
-        <PrivateRoute exact path="/profile" component={Profile} />
-        <PrivateRoute exact path="/payment" component={Payment} />
-        <PrivateRoute exact path="/income-trip" component={IncomeTrip} />
-        <PrivateRoute exact path="/add-trip" component={AddTrip} />
-        <PrivateRoute exact path="/list-transaction" component={ListTransaction} />
+        {state.isLogin === false ? (
+          <>
+            <Route exact path="/" component={Home} />
+            <Route exact path="/login" component={Login} />
+            <Route exact path="/register" component={Regist} />
+            <Route exact path="/detail-trip/:id" component={DetailTrip} />
+            <Redirect to="/" />
+          </>
+        ) : (
+          <>
+            {state.user.status === 1 ? (
+              <>
+                <Route exact path="/" component={Home} />
+                <Route exact path="/detail-trip/:id" component={DetailTrip} />
+                <Route exact path="/income-trip" component={IncomeTrip} />
+                <Route exact path="/add-trip" component={AddTrip} />
+                <Route exact path="/list-transaction" component={ListTransaction} />
+                <Redirect to="/" />
+              </>
+            ) : (
+              <>
+                <Route exact path="/" component={Home} />
+                <Route exact path="/detail-trip/:id" component={DetailTrip} />
+                <Route exact path="/profile" component={Profile} />
+                <Route exact path="/payment" component={Payment} />
+                <Redirect to="/" />
+              </>
+            )}
+          </>
+        )}
       </Switch>
     </>
   );

@@ -1,10 +1,27 @@
 import Navbar from '../components/Navbar';
-// import Payment from './Payment';
+import Footer from '../components/Footer';
 import { UploadProof, InfoTrip } from './Payment';
 import { Table, THeader, TBody, TData, TFoot } from '../components/Table';
-import Footer from '../components/Footer';
+import { useContext } from 'react';
+import { AuthContext } from '../context/authContext';
 
 function Profile() {
+  const { state } = useContext(AuthContext);
+
+  const tourData = JSON.parse(localStorage.getItem('tour_data'));
+  const dataTransaction = JSON.parse(localStorage.getItem('transaction'));
+
+  const transaction = dataTransaction[0];
+  const userId = transaction.userId;
+
+  const data = tourData[userId - 1];
+  const user = state.user;
+
+  const rupiah = (number) => {
+    return new Intl.NumberFormat('id-ID', {
+      minimumFractionDigits: 0,
+    }).format(number);
+  };
   return (
     <div className="pt-36 bg-gray-100 ">
       <Navbar class="bg-navbar" />
@@ -15,9 +32,9 @@ function Profile() {
               <header className="pb-8">
                 <h1 className="text-4xl font-bold">Personal Info</h1>
               </header>
-              <DataUser icon="/assets/icons/name.svg" desc="Full Name" name="Nadrian Fikri" />
-              <DataUser icon="/assets/icons/email.svg" desc="Email" name="nadrian@gmail.com" />
-              <DataUser icon="/assets/icons/phone.svg" desc="Mobile Phone" name="0858-0933-2322" />
+              <DataUser icon="/assets/icons/name.svg" desc="Full Name" name={user.name} />
+              <DataUser icon="/assets/icons/email.svg" desc="Email" name={user.email} />
+              <DataUser icon="/assets/icons/phone.svg" desc="Mobile Phone" name={user.phone} />
               <DataUser icon="/assets/icons/loc.svg" desc="Address" name="Perumahan Permata Bintaro Residence C-3" />
             </div>
 
@@ -30,7 +47,7 @@ function Profile() {
 
         <section className="container mx-auto">
           <h1 className="text-2xl font-bold py-10">History Trip</h1>
-
+          {/* box invoice */}
           <div className="flex flex-col gap-2 py-2 px-6 bg-white border-2  border-gray-300 rounded-md">
             <section className="flex justify-between items-center ">
               <div>
@@ -39,39 +56,39 @@ function Profile() {
               <div className="text-right space-y-2">
                 <h1 className="font-bold text-4xl">Booking</h1>
                 <p className="text-gray-400 text-lg">
-                  <span className="font-bold">Saturday</span>, 22 July 2020
+                  <span className="font-bold">Saturday</span>, {data.date}
                 </p>
               </div>
             </section>
-
             <section className="flex justify-between items-center overflow-auto">
               <div className="flex flex-col justify-between gap-8">
                 <div className="text-2xl font-bold">
-                  <h1>6D/4N Fun Tassie Vacation</h1>
-                  <p className="text-sm text-gray-400">Australia</p>
+                  <h1>
+                    {data.duration.day}D/{data.duration.night}N {data.name}
+                  </h1>
+                  <p className="text-sm text-gray-400">{data.country}</p>
                 </div>
-                <div className="bg-yellow-100 text-yellow-400 p-2 rounded-md w-max">Waiting Approve</div>
+                <div className={`bg-${transaction.payment.style}-100 text-${transaction.payment.style}-400 p-2 rounded-md w-max`}>{transaction.payment.status}</div>
               </div>
               <div className="flex flex-col justify-between gap-8">
-                <InfoTrip title="Data Trip" desc="26 Agustus 2020" />
-                <InfoTrip title="Accomodation" desc="Hotel 4 Night" />
+                <InfoTrip title="Data Trip" desc={data.date} />
+                <InfoTrip title="Accomodation" desc={data.accomodation} />
               </div>
               <div className="flex flex-col justify-between gap-8">
-                <InfoTrip title="Duration" desc="6 Day 4 Night" />
-                <InfoTrip title="Transportation" desc="Qatar Airways" />
+                <InfoTrip title="Duration" desc={`${data.duration.day} Day ${data.duration.night} Night`} />
+                <InfoTrip title="Transportation" desc={data.transportation} />
               </div>
-              <div className="flex flex-col justify-between gap-8">
-                <UploadProof image="/assets/images/proof.png" desc="Upload payment proof" />
+              <div className="flex flex-col justify-between text-center gap-8">
+                <UploadProof image="/assets/images/qr-code 1.png" desc="TCK0101" />
               </div>
             </section>
             <section className="flex flex-col overflow-auto">
               <Table>
                 <THeader col1="No" col2="Full Name" col3="Gender" col4="Phone" />
                 <TBody>
-                  <TData no="1" fullName="Nadrian" gender="Male" phone="08367236278" qty="2" />
-                  <TData no="2" fullName="alfikri" gender="Female" phone="08367236278" qty="2" />
+                  <TData no="1" fullName={user.name} gender="Male" phone={user.phone} qty={transaction.qty} />
                 </TBody>
-                <TFoot total="IDR 12.000.000" />
+                <TFoot total={`IDR. ${rupiah(transaction.total)}`} />
               </Table>
             </section>
           </div>

@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom';
 function Card1(props) {
   return (
-    <div id="card" className="text-center rounded-sm bg-white p-4 mx-8 mb-8 w-64 h-80">
+    <div id={props.id} className="text-center rounded-sm bg-white p-4 mx-8 mb-8 w-64 h-80">
       <div className="card-img mt-6 flex justify-center">
         <img src={props.img} alt="img" />
       </div>
@@ -25,7 +25,9 @@ function Card2(props) {
         <p className="absolute top-3 rounded-bl-md rounded-tl-md right-0 px-3 py-1 bg-white text-sm">{props.capacity}</p>
       </div>
       <div className="card-title my-4 font-medium text-xl">
-        <Link to={`/detail-trip/${props.id}`}>{props.title}</Link>
+        <Link to={`/detail-trip/${props.id}`}>
+          {props.day}D/{props.night}N {props.title}
+        </Link>
       </div>
       <div className="card-body flex justify-between text-lg">
         <p className="text-yellow-400 font-black">

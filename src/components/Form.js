@@ -1,6 +1,6 @@
 function Form(props) {
   return (
-    <form action={props.action} method={props.method} encType={props.enctype} className="space-y-6 ">
+    <form action={props.action} method={props.method} encType={props.enctype} className="space-y-6 " onSubmit={props.submit}>
       {props.children}
     </form>
   );
@@ -11,7 +11,7 @@ function FormGroup(props) {
       <label htmlFor={props.labelFor} className="font-bold text-lg">
         {props.labelName}
       </label>
-      <input type={props.typeInput} id={props.id} name={props.name} value={props.value} className="focus:outline-none focus:shadow-md p-2 bg-gray-200 rounded-md border-2 border-gray-300" required />
+      <input onChange={props.onChange} type={props.typeInput} id={props.id} name={props.name} value={props.value} className="focus:outline-none focus:shadow-md p-2 bg-gray-200 rounded-md border-2 border-gray-300" required />
     </div>
   );
 }
@@ -22,9 +22,9 @@ function DoubleInput(props) {
         {props.labelName}
       </label>
       <div className="flex items-center gap-4">
-        <input type={props.typeInput} name="day" className="focus:outline-none focus:shadow-md p-2 bg-gray-200 rounded-md border-2 border-gray-300" />
+        <input onChange={props.onChange} type={props.typeInput} name="day" className="focus:outline-none focus:shadow-md p-2 bg-gray-200 rounded-md border-2 border-gray-300" />
         <p className="font-bold text-lg pr-6">Day</p>
-        <input type={props.typeInput} name="night" className="focus:outline-none focus:shadow-md p-2 bg-gray-200 rounded-md border-2 border-gray-300" />
+        <input onChange={props.onChange} type={props.typeInput} name="night" className="focus:outline-none focus:shadow-md p-2 bg-gray-200 rounded-md border-2 border-gray-300" />
         <p className="font-bold text-lg">Night</p>
       </div>
     </div>
@@ -36,7 +36,7 @@ function Select(props) {
       <label htmlFor={props.labelFor} className="font-bold text-lg">
         {props.labelName}
       </label>
-      <select type={props.typeInput} id={props.id} name={props.name} className="focus:outline-none focus:shadow-md p-2 bg-gray-200 rounded-md border-2 border-gray-300">
+      <select onChange={props.onChange} type={props.typeInput} id={props.id} name={props.name} className="focus:outline-none focus:shadow-md p-2 bg-gray-200 rounded-md border-2 border-gray-300">
         <option selected disabled>
           {' '}
         </option>
@@ -55,15 +55,14 @@ function TextArea(props) {
       <label htmlFor={props.labelFor} className="font-bold text-lg">
         {props.labelName}
       </label>
-      <textarea rows="4" cols="50" id={props.id} name={props.name} className="focus:outline-none focus:shadow-md p-2 bg-gray-200 rounded-md border-2 border-gray-300"></textarea>
+      <textarea onChange={props.onChange} rows="4" cols="50" id={props.id} name={props.name} className="focus:outline-none focus:shadow-md p-2 bg-gray-200 rounded-md border-2 border-gray-300"></textarea>
     </div>
   );
 }
 function InputSubmit(props) {
   return (
-    // flex-col
     <div className="form-group space-y-2 text-center">
-      <input onClick={props.submit} value={props.value} type="submit" name="submit" className={`font-bold p-2 bg-yellow-400 hover:bg-yellow-500 text-white text-lg rounded-md cursor-pointer px-20 w-${props.w}`} />
+      <input value={props.value} type="submit" name="submit" className={`font-bold p-2 bg-yellow-400 hover:bg-yellow-500 text-white text-lg rounded-md cursor-pointer px-20 w-${props.w}`} />
     </div>
   );
 }
@@ -76,7 +75,7 @@ function InputImage(props) {
       <label htmlFor={props.labelFor} className="w-max text-yellow-500 bg-gray-200 rounded-md text-lg flex gap-10 cursor-pointer p-2 border-2 border-gray-300">
         Attach Here <img src="/assets/icons/attach.svg" alt="icon" />
       </label>
-      <input type="file" hidden id="image" name="image" />
+      <input onChange={props.onChange} type="file" hidden id="image" name="image" />
     </div>
   );
 }

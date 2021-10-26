@@ -1,12 +1,12 @@
 import { createContext, useReducer } from 'react';
+import users from '../assets/user.json';
 
 const initialValue = {
   isLogin: false,
-  user: {
-    email: '',
-    password: '',
-  },
+  user: users,
 };
+
+// localStorage.setItem('user', JSON.stringify(initialValue));
 
 export const AuthContext = createContext();
 
@@ -21,31 +21,27 @@ function reducer(state, action) {
           user: payload,
         })
       );
+
       return {
         isLogin: true,
         user: payload,
       };
+
     case 'LOGOUT':
-      localStorage.removeItem('user');
-      return {
-        isLogin: false,
-        user: {
-          email: '',
-          password: '',
-        },
-      };
+      // const user = JSON.parse(localStorage.getItem('user'));
+      localStorage.setItem(
+        'user',
+        JSON.stringify({
+          isLogin: false,
+          user: initialValue.user,
+        })
+      );
+      return initialValue;
+
     case 'AUTH':
       const loginState = JSON.parse(localStorage.getItem('user'));
+      return loginState ? loginState : initialValue;
 
-      return loginState
-        ? loginState
-        : {
-            isLogin: false,
-            user: {
-              email: '',
-              password: '',
-            },
-          };
     default:
       throw new Error("type doesn't match cases");
   }

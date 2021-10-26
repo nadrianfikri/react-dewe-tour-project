@@ -1,15 +1,40 @@
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
-import { useState } from 'react';
-import { useParams } from 'react-router-dom';
-import datas from '../assets/destination.json';
+import { useState, useContext } from 'react';
+import { useParams, useHistory } from 'react-router-dom';
+// import datas from '../assets/destination.json';
+
+import { AuthContext } from '../context/authContext';
 
 function DetailTrip() {
+  const datas = JSON.parse(localStorage.getItem('tour_data'));
+  const { state } = useContext(AuthContext);
+
+  const history = useHistory();
   const { id } = useParams();
 
   let index = id - 1;
   const [detail] = useState(datas[index]);
   const [count, setCount] = useState(1);
+
+  const handleOnSubmit = (e) => {
+    e.preventDefault();
+
+    const transaction = {
+      userId: id,
+      payment: {
+        status: 'Waiting Payment',
+        style: 'red',
+      },
+      qty: count,
+      price: detail.price,
+      total: count * detail.price,
+      image: '',
+    };
+
+    localStorage.setItem('transaction', JSON.stringify([transaction]));
+    history.push('/payment');
+  };
 
   const increment = () => {
     // set new value to state
@@ -18,7 +43,7 @@ function DetailTrip() {
 
   const decrement = () => {
     // set new value to state
-    setCount(count <= 0 ? count : count - 1);
+    setCount(count <= 1 ? count : count - 1);
   };
 
   const rupiah = (number) => {
@@ -26,15 +51,14 @@ function DetailTrip() {
       minimumFractionDigits: 0,
     }).format(number);
   };
-  console.log(detail);
 
   return (
     <div className="pt-36 bg-gray-100">
-      <Navbar bg="bg-navbar" class="none" />
+      <Navbar class="bg-navbar" />
       <main className="px-auto lg:px-36">
         <section className="mx-auto mb-10 w-auto lg:w-max px-2">
           <div className=" px-4 pb-6 space-y-4">
-            <h1 className="text-4xl md:text-5xl font-bold">{detail.name}</h1>
+            <h1 className="text-4xl md:text-5xl font-bold">{`${detail.duration.day}D/${detail.duration.night}N ${detail.name}`}</h1>
             <p className="text-2xl text-gray-400">{detail.country}</p>
           </div>
           <div className="pb-2">
@@ -61,7 +85,7 @@ function DetailTrip() {
             <ArticleBody title="Accomodation" icon="/assets/icons/hotel 1.svg" detail={detail.accomodation} />
             <ArticleBody title="Transportation" icon="/assets/icons/plane 1.svg" detail={detail.transportation} />
             <ArticleBody title="Eat" icon="/assets/icons/meal 1.svg" detail={detail.eat} />
-            <ArticleBody title="Duration" icon="/assets/icons/time 1.svg" detail={detail.duration} />
+            <ArticleBody title="Duration" icon="/assets/icons/time 1.svg" detail={`${detail.duration.day} Day ${detail.duration.night} Night`} />
             <ArticleBody title="Date Trip" icon="/assets/icons/calendar 1.svg" detail={detail.date} />
           </div>
         </Article>
@@ -71,7 +95,7 @@ function DetailTrip() {
         </Article>
 
         <Article>
-          <form action="/">
+          <form action="/" method="post" onSubmit={handleOnSubmit}>
             <div className="form-group border-b-2 flex justify-between items-center font-bold text-2xl">
               <label className="flex-1 text-yellow-400" htmlFor="qty">
                 IDR. {rupiah(detail.price)}
@@ -81,7 +105,7 @@ function DetailTrip() {
                 <button type="button" onClick={decrement}>
                   <img src="/assets/icons/Minus.svg" alt="icon" />
                 </button>
-                <input type="number" name="qty" value={count} readonly className="py-4 focus:outline-none bg-transparent text-center font-bold w-10 text-lg" />
+                <input type="number" name="qty" value={count} readOnly className="py-4 focus:outline-none bg-transparent text-center font-bold w-10 text-lg" />
                 <button type="button" onClick={increment}>
                   <img src="/assets/icons/Plus.svg" alt="icon" />
                 </button>
@@ -95,7 +119,12 @@ function DetailTrip() {
               <input type="number" hidden name="total" value={detail.price * count} />
             </div>
             <div className="form-group m-2 flex justify-end font-bold text-2xl">
-              <input type="submit" value="BOOK NOW" className=" mt-4 py-2 px-10 bg-yellow-400 text-right text-white font-bold text-lg rounded-md hover:bg-yellow-500 cursor-pointer " />
+              {/* conditional btn */}
+              {state.isLogin ? (
+                <input type="submit" value="BOOK NOW" className=" mt-4 py-2 px-10 bg-yellow-400 text-right text-white font-bold text-lg rounded-md hover:bg-yellow-500 cursor-pointer " />
+              ) : (
+                <input disabled type="submit" value="BOOK NOW" className=" mt-4 py-2 px-10 opacity-50 bg-gray-400 text-right text-white font-bold text-lg rounded-md " />
+              )}
             </div>
           </form>
         </Article>
