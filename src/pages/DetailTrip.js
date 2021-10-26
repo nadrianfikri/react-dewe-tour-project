@@ -1,9 +1,40 @@
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
-import { useState } from 'react';
+import { useState, useContext } from 'react';
+import { useParams, useHistory } from 'react-router-dom';
+// import datas from '../assets/destination.json';
+
+import { AuthContext } from '../context/authContext';
 
 function DetailTrip() {
+  const datas = JSON.parse(localStorage.getItem('tour_data'));
+  const { state } = useContext(AuthContext);
+
+  const history = useHistory();
+  const { id } = useParams();
+
+  let index = id - 1;
+  const [detail] = useState(datas[index]);
   const [count, setCount] = useState(1);
+
+  const handleOnSubmit = (e) => {
+    e.preventDefault();
+
+    const transaction = {
+      userId: id,
+      payment: {
+        status: 'Waiting Payment',
+        style: 'red',
+      },
+      qty: count,
+      price: detail.price,
+      total: count * detail.price,
+      image: '',
+    };
+
+    localStorage.setItem('transaction', JSON.stringify([transaction]));
+    history.push('/payment');
+  };
 
   const increment = () => {
     // set new value to state
@@ -12,31 +43,37 @@ function DetailTrip() {
 
   const decrement = () => {
     // set new value to state
-    setCount(count <= 0 ? count : count - 1);
+    setCount(count <= 1 ? count : count - 1);
+  };
+
+  const rupiah = (number) => {
+    return new Intl.NumberFormat('id-ID', {
+      minimumFractionDigits: 0,
+    }).format(number);
   };
 
   return (
     <div className="pt-36 bg-gray-100">
-      <Navbar bg="bg-navbar" class="none" />
+      <Navbar class="bg-navbar" />
       <main className="px-auto lg:px-36">
         <section className="mx-auto mb-10 w-auto lg:w-max px-2">
           <div className=" px-4 pb-6 space-y-4">
-            <h1 className="text-4xl md:text-5xl font-bold">6D/4N Fun Tassie Vacation + Sydney</h1>
-            <p className="text-2xl text-gray-400">Australia</p>
+            <h1 className="text-4xl md:text-5xl font-bold">{`${detail.duration.day}D/${detail.duration.night}N ${detail.name}`}</h1>
+            <p className="text-2xl text-gray-400">{detail.country}</p>
           </div>
           <div className="pb-2">
-            <img className="rounded-lg" src="/assets/images/details/detailAUS-1.png" alt="img" />
+            <img className="rounded-lg" src={`/assets/images/details/${detail.detailImage[0]}`} alt="img" />
           </div>
 
           <div className="flex overflow-auto justify-between gap-2">
             <div className="flex-none w-1/2 md:w-auto">
-              <img src="/assets/images/details/detailAUS-2.png" alt="img" />
+              <img src={`/assets/images/details/${detail.detailImage[1]}`} alt="img" />
             </div>
             <div className="flex-none w-1/2 md:w-auto">
-              <img src="/assets/images/details/detailAUS-3.png" alt="img" />
+              <img src={`/assets/images/details/${detail.detailImage[2]}`} alt="img" />
             </div>
             <a href="/" className="flex-none w-1/2 md:w-auto relative ">
-              <img src="/assets/images/details/detailAUS-4.png" alt="img" />
+              <img src={`/assets/images/details/${detail.detailImage[3]}`} alt="img" />
               <p className="absolute top-1/2 left-1/2 transform -translate-y-1/2 -translate-x-1/2 text-white text-2xl font-bold">+5</p>
             </a>
           </div>
@@ -45,11 +82,11 @@ function DetailTrip() {
         <Article>
           <Header title="Information Trip" />
           <div className="flex overflow-auto justify-between space-x-8">
-            <ArticleBody title="Accomodation" icon="/assets/icons/hotel 1.svg" detail="Hotel 4 Night" />
-            <ArticleBody title="Transportation" icon="/assets/icons/plane 1.svg" detail="Qatar Airways" />
-            <ArticleBody title="Eat" icon="/assets/icons/meal 1.svg" detail="Include as Itinenary" />
-            <ArticleBody title="Duration" icon="/assets/icons/time 1.svg" detail="6 Day 4 Night" />
-            <ArticleBody title="Date Trip" icon="/assets/icons/calendar 1.svg" detail="26 August 2020" />
+            <ArticleBody title="Accomodation" icon="/assets/icons/hotel 1.svg" detail={detail.accomodation} />
+            <ArticleBody title="Transportation" icon="/assets/icons/plane 1.svg" detail={detail.transportation} />
+            <ArticleBody title="Eat" icon="/assets/icons/meal 1.svg" detail={detail.eat} />
+            <ArticleBody title="Duration" icon="/assets/icons/time 1.svg" detail={`${detail.duration.day} Day ${detail.duration.night} Night`} />
+            <ArticleBody title="Date Trip" icon="/assets/icons/calendar 1.svg" detail={detail.date} />
           </div>
         </Article>
         <Article>
@@ -58,30 +95,36 @@ function DetailTrip() {
         </Article>
 
         <Article>
-          <form action="/">
+          <form action="/" method="post" onSubmit={handleOnSubmit}>
             <div className="form-group border-b-2 flex justify-between items-center font-bold text-2xl">
               <label className="flex-1 text-yellow-400" htmlFor="qty">
-                IDR 12.000.000<span className="text-black"> / Person</span>
+                IDR. {rupiah(detail.price)}
+                <span className="text-black"> / Person</span>
               </label>
               <div className="flex flex-0 gap-2">
                 <button type="button" onClick={decrement}>
                   <img src="/assets/icons/Minus.svg" alt="icon" />
                 </button>
-                <input type="number" name="qty" value={count} readonly className="py-4 focus:outline-none bg-transparent text-center font-bold w-10 text-lg" />
+                <input type="number" name="qty" value={count} readOnly className="py-4 focus:outline-none bg-transparent text-center font-bold w-10 text-lg" />
                 <button type="button" onClick={increment}>
                   <img src="/assets/icons/Plus.svg" alt="icon" />
                 </button>
               </div>
             </div>
             <div className="form-group border-b-2 text-yellow-400 flex justify-between items-center font-bold text-2xl">
-              <label className="text-black" htmlFor="qty">
+              <label className="text-black" htmlFor="total">
                 Total:
               </label>
-              <p className="py-4 focus:outline-none bg-transparent text-right font-bold ">IDR 12.000.000</p>
-              <input type="number" hidden name="total" value="12000000" />
+              <p className="py-4 focus:outline-none bg-transparent text-right font-bold ">IDR. {rupiah(detail.price * count)}</p>
+              <input type="number" hidden name="total" value={detail.price * count} />
             </div>
             <div className="form-group m-2 flex justify-end font-bold text-2xl">
-              <input type="submit" value="BOOK NOW" className=" mt-4 py-2 px-10 bg-yellow-400 text-right text-white font-bold text-lg rounded-md hover:bg-yellow-500 cursor-pointer " />
+              {/* conditional btn */}
+              {state.isLogin ? (
+                <input type="submit" value="BOOK NOW" className=" mt-4 py-2 px-10 bg-yellow-400 text-right text-white font-bold text-lg rounded-md hover:bg-yellow-500 cursor-pointer " />
+              ) : (
+                <input disabled type="submit" value="BOOK NOW" className=" mt-4 py-2 px-10 opacity-50 bg-gray-400 text-right text-white font-bold text-lg rounded-md " />
+              )}
             </div>
           </form>
         </Article>
