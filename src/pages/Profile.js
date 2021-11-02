@@ -1,11 +1,9 @@
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
-import { UploadProof, InfoTrip } from './Payment';
-import { Table, THeader, TBody, TData, TFoot } from '../components/Table';
-import { useContext } from 'react';
-import { AuthContext } from '../context/authContext';
 import Invoice from '../components/Invoice';
 import Box from '../components/Box';
+import { useContext } from 'react';
+import { AuthContext } from '../context/authContext';
 
 function Profile() {
   const { state } = useContext(AuthContext);
@@ -19,11 +17,6 @@ function Profile() {
   const data = tourData[userId - 1]; //instead find()
   const user = state.user;
 
-  const rupiah = (number) => {
-    return new Intl.NumberFormat('id-ID', {
-      minimumFractionDigits: 0,
-    }).format(number);
-  };
   return (
     <div className="pt-36 bg-gray-100 ">
       <Navbar class="bg-navbar" />

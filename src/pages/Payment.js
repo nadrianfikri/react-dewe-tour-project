@@ -2,7 +2,6 @@ import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import Invoice from '../components/Invoice';
 
-import { Table, THeader, TBody, TData, TFoot } from '../components/Table';
 import { Modal } from '../components/Modal';
 
 import { useContext } from 'react';
@@ -22,12 +21,6 @@ function Payment() {
 
   const data = tourData[userId - 1];
   const user = state.user;
-
-  const rupiah = (number) => {
-    return new Intl.NumberFormat('id-ID', {
-      minimumFractionDigits: 0,
-    }).format(number);
-  };
 
   const handleOnSubmit = (e) => {
     e.preventDefault();

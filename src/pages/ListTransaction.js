@@ -29,12 +29,6 @@ function ListTransaction() {
     statusPayment = 'Pending';
   }
 
-  const rupiah = (number) => {
-    return new Intl.NumberFormat('id-ID', {
-      minimumFractionDigits: 0,
-    }).format(number);
-  };
-
   const handleCancel = () => {
     transaction.payment.status = 'Canceled';
     transaction.payment.style = 'red';
