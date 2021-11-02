@@ -37,15 +37,19 @@ function Select(props) {
         {props.labelName}
       </label>
       <select onChange={props.onChange} type={props.typeInput} id={props.id} name={props.name} className="focus:outline-none focus:shadow-md p-2 bg-gray-200 rounded-md border-2 border-gray-300">
-        <option selected disabled>
-          {' '}
-        </option>
-        <option value="Indonesia">Indonesia</option>
-        <option value="Australia">Australia</option>
-        <option value="Japan">Japan</option>
-        <option value="South Korea"> South Korea</option>
+        {props.children}
       </select>
     </div>
+  );
+}
+
+function Option(props) {
+  return (
+    <>
+      <option onChange={props.onChange} value={props.value}>
+        {props.field}
+      </option>
+    </>
   );
 }
 
@@ -92,4 +96,4 @@ function DirectText(props) {
   );
 }
 
-export { Form, FormGroup, InputSubmit, InputImage, DirectText, TextArea, Select, DoubleInput };
+export { Form, FormGroup, InputSubmit, InputImage, DirectText, TextArea, Select, Option, DoubleInput };
