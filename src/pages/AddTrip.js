@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
-import { Form, FormGroup, TextArea, InputSubmit, InputImage, Select, DoubleInput } from '../components/Form';
+import { Form, FormGroup, TextArea, InputSubmit, InputImage, Select, Option, DoubleInput } from '../components/Form';
 
 import { useHistory } from 'react-router-dom';
 
@@ -75,7 +75,12 @@ function AddTrip() {
         <div className="overflow-auto">
           <Form action="/" submit={handleOnSubmit}>
             <FormGroup onChange={handleOnChange} labelFor="title" labelName="Title Trip" typeInput="text" name="title" id="title" />
-            <Select labelFor="country" labelName="Country" typeInput="text" name="country" id="country" />
+            <Select labelFor="country" labelName="Country" name="country" id="country">
+              <Option onChange={handleOnChange} value="Australia" field="Australia" />
+              <Option onChange={handleOnChange} value="South Korea" field="South Korea" />
+              <Option onChange={handleOnChange} value="Indonesia" field="Indonesia" />
+              <Option onChange={handleOnChange} value="Japan" field="Japan" />
+            </Select>
             <FormGroup onChange={handleOnChange} labelFor="accomodation" labelName="Accomodation" typeInput="text" name="accomodation" id="accomodation" />
             <FormGroup onChange={handleOnChange} labelFor="transportation" labelName="Transportation" typeInput="text" name="transportation" id="transportation" />
             <FormGroup onChange={handleOnChange} labelFor="eat" labelName="Eat" typeInput="text" name="eat" id="eat" />
