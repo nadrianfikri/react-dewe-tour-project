@@ -2,6 +2,7 @@ import { Route, Switch, Redirect } from 'react-router-dom';
 import { useContext } from 'react';
 import { AuthContext } from './context/authContext';
 
+import ScrollToTop from './components/ScrollToTop';
 import Home from './pages/Home';
 import Login from './pages/Auth/Login';
 import Regist from './pages/Auth/Regist';
@@ -18,6 +19,7 @@ function App() {
 
   return (
     <>
+      <ScrollToTop />
       <Switch>
         {state.isLogin === false ? (
           <>
