@@ -1,10 +1,8 @@
 import { Card1, Card2 } from '../../components/Card';
-// import dataDestinations from '../../assets/destination.json';
+import dataDestinations from '../../assets/destination.json';
 import serveContent from '../../assets/serveContent.json';
 
 function Content() {
-  const dataDestinations = JSON.parse(localStorage.getItem('tour_data'));
-
   return (
     <div id="content" className="flex flex-col justify-center items-center pb-10">
       <div id="service" className="flex flex-wrap justify-center  transform -translate-y-8  px-4">

@@ -1,5 +1,5 @@
-import { Route, Switch, Redirect } from 'react-router-dom';
-import { useContext } from 'react';
+import { useContext, useEffect } from 'react';
+import { Route, Switch, useHistory } from 'react-router-dom';
 import { AuthContext } from './context/authContext';
 
 import ScrollToTop from './components/ScrollToTop';
@@ -13,44 +13,60 @@ import IncomeTrip from './pages/IncomeTrip';
 import ListTransaction from './pages/ListTransaction';
 import AddTrip from './pages/AddTrip';
 
+// get API config and setAuthToken
+import { API, setAuthToken } from './config/api';
+
+//init token on axios every time the app is refreshed
+if (localStorage.token) {
+  setAuthToken(localStorage.token);
+}
+
 function App() {
-  const { state } = useContext(AuthContext);
-  // const user = JSON.parse(localStorage.getItem('user'));
+  let history = useHistory();
+
+  // init authContext
+  const [dispatch] = useContext(AuthContext);
+
+  // create function for check user token
+  const checkUser = async () => {
+    try {
+      const response = await API.get('/check-auth');
+
+      if (response.status !== 200) {
+        dispatch({
+          type: 'AUTH_ERROR',
+        });
+      }
+
+      let payload = response.data.data.user;
+      payload.token = localStorage.token;
+      dispatch({
+        type: 'AUTH_SUCCESS',
+        payload,
+      });
+    } catch (error) {
+      history.push('/');
+    }
+  };
+
+  // Call function check user with useEffect
+  useEffect(() => {
+    checkUser();
+  }, []);
 
   return (
     <>
       <ScrollToTop />
       <Switch>
-        {state.isLogin === false ? (
-          <>
-            <Route exact path="/" component={Home} />
-            <Route exact path="/login" component={Login} />
-            <Route exact path="/register" component={Regist} />
-            <Route exact path="/detail-trip/:id" component={DetailTrip} />
-            <Redirect to="/" />
-          </>
-        ) : (
-          <>
-            {state.user.status === 1 ? (
-              <>
-                <Route exact path="/" component={Home} />
-                <Route exact path="/detail-trip/:id" component={DetailTrip} />
-                <Route exact path="/income-trip" component={IncomeTrip} />
-                <Route exact path="/add-trip" component={AddTrip} />
-                <Route exact path="/list-transaction" component={ListTransaction} />
-                <Redirect to="/" />
-              </>
-            ) : (
-              <>
-                <Route exact path="/" component={Home} />
-                <Route exact path="/detail-trip/:id" component={DetailTrip} />
-                <Route exact path="/profile" component={Profile} />
-                <Route exact path="/payment" component={Payment} />
-                <Redirect to="/" />
-              </>
-            )}
-          </>
-        )}
+        <Route exact path="/" component={Home} />
+        <Route exact path="/detail-trip/:id" component={DetailTrip} />
+        <Route exact path="/login" component={Login} />
+        <Route exact path="/register" component={Regist} />
+        <Route exact path="/profile" component={Profile} />
+        <Route exact path="/payment" component={Payment} />
+        <Route exact path="/list-transaction" component={ListTransaction} />
+        <Route exact path="/income-trip" component={IncomeTrip} />
+        <Route exact path="/add-trip" component={AddTrip} />
       </Switch>
     </>
   );

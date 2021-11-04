@@ -1,46 +1,76 @@
 import { Modal, ModalTitle, ModalBody } from '../../components/Modal';
 import { Form, FormGroup, InputSubmit, DirectText } from '../../components/Form';
 
-import { useContext, useEffect } from 'react';
+import { useContext, useState } from 'react';
 import { AuthContext } from '../../context/authContext';
+
+// get API config
+import { API, setAuthToken } from '../../config/api';
+import { useHistory } from 'react-router';
+import Alert from '../../components/Alert';
+
 function Login() {
-  const { state, dispatch } = useContext(AuthContext);
+  let history = useHistory();
 
-  useEffect(() => {
-    console.log('App component did mount');
+  const [state, dispatch] = useContext(AuthContext);
 
-    dispatch({ type: 'AUTH' });
-  }, []);
-  useEffect(() => {
-    if (state.user.email) {
-      console.log('App component did update');
-    }
-  }, [state]);
+  const [message, setMessage] = useState(null);
 
-  const handleOnSubmit = (e) => {
-    e.preventDefault();
-    const dataUser = JSON.parse(localStorage.getItem('user'));
-    const listUser = dataUser.user;
+  // store data with useState
+  const [form, setForm] = useState({
+    email: '',
+    password: '',
+  });
 
-    document.querySelector('#modalLogin').classList.toggle('hidden');
-    const email = document.getElementById('email').value;
-    const password = document.getElementById('password').value;
+  const { email, password } = form;
 
-    const matchUser = listUser.find((user) => {
-      if (user.email === email && user.password === password) {
-        return user;
-      } else {
-        return null;
-      }
+  const handleChange = (e) => {
+    setForm({
+      ...form,
+      [e.target.name]: e.target.value,
     });
+  };
 
-    if (matchUser) {
-      dispatch({
-        type: 'LOGIN',
-        payload: matchUser,
-      });
-    } else {
-      alert('Email or Password is wrong');
+  const handleOnSubmit = async (e) => {
+    try {
+      e.preventDefault();
+      // create config content-type
+      const config = {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      };
+
+      // convert form data to string
+      const body = JSON.stringify(form);
+
+      // insert data user for login process
+      const response = await API.post('/login', body, config);
+      setAuthToken(response.data.data.token);
+
+      //checking process
+      if (response?.status === 200) {
+        // send data to context
+        dispatch({
+          type: 'LOGIN_SUCCESS',
+          payload: response.data.data,
+        });
+      }
+
+      // role user check
+      if (response.data.data.role === 'admin') {
+        history.push('/income-trip');
+      } else {
+        history.push('/');
+      }
+
+      const alert = <Alert variant="green" message="Login Success" />;
+      setMessage(alert);
+    } catch (error) {
+      const alert = <Alert variant="red" message="Login Failed" />;
+      setMessage(alert);
+
+      console.log(error);
     }
   };
 
@@ -52,12 +82,36 @@ function Login() {
     <>
       <Modal id="modalLogin">
         <ModalTitle title="Login" />
+        {message && message}
         <ModalBody>
           <Form action="/" method="post" submit={handleOnSubmit}>
-            <FormGroup id="email" labelFor="email" labelName="Email" typeInput="email" name="email" />
-            <FormGroup id="password" labelFor="password" labelName="Password" typeInput="password" name="password" />
+            <FormGroup
+              //
+              id="email"
+              labelFor="email"
+              labelName="Email"
+              typeInput="email"
+              name="email"
+              value={email}
+              onChange={handleChange}
+            />
+            <FormGroup
+              //
+              id="password"
+              labelFor="password"
+              labelName="Password"
+              typeInput="password"
+              name="password"
+              value={password}
+              onChange={handleChange}
+            />
             <InputSubmit value="Login" w="full" />
-            <DirectText click={handleLoginModal} desc="Don't have an account? Klik " textLink="Here" />
+            <DirectText
+              //
+              click={handleLoginModal}
+              desc="Don't have an account? Klik "
+              textLink="Here"
+            />
           </Form>
         </ModalBody>
       </Modal>
