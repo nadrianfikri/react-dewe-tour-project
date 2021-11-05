@@ -25,7 +25,7 @@ function App() {
   let history = useHistory();
 
   // init authContext
-  const [dispatch] = useContext(AuthContext);
+  const [state, dispatch] = useContext(AuthContext);
 
   // create function for check user token
   const checkUser = async () => {
@@ -56,6 +56,8 @@ function App() {
 
   return (
     <>
+      {/* {state.isLoading ? ( */}
+      {/* <> */}
       <ScrollToTop />
       <Switch>
         <Route exact path="/" component={Home} />
@@ -68,6 +70,12 @@ function App() {
         <Route exact path="/income-trip" component={IncomeTrip} />
         <Route exact path="/add-trip" component={AddTrip} />
       </Switch>
+      {/* </>
+      ) : (
+        <div className="flex h-screen justify-center items-center ">
+          <p className="animate-spin text-5xl">+</p>
+        </div>
+      )} */}
     </>
   );
 }

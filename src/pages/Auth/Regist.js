@@ -20,7 +20,6 @@ function Regist() {
     email: '',
     password: '',
     phone: '',
-    address: '',
   });
 
   const { fullname, email, password, phone } = form;
@@ -58,7 +57,7 @@ function Regist() {
         const alert = <Alert variant="red" message="Failed" />;
         setMessage(alert);
       }
-      //   setMessage(alert);
+
       document.querySelector('#modalRegist').classList.toggle('hidden');
       history.push('/');
     } catch (error) {
@@ -85,7 +84,7 @@ function Regist() {
               onChange={handleOnChange}
               labelFor="name"
               labelName="Full Name"
-              typeInput="name"
+              typeInput="text"
               name="fullname"
               value={fullname}
             />
@@ -112,7 +111,7 @@ function Regist() {
               onChange={handleOnChange}
               labelFor="phone"
               labelName="Phone"
-              typeInput="number"
+              typeInput="text"
               name="phone"
               value={phone}
             />

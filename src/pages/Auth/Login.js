@@ -64,10 +64,31 @@ function Login() {
         history.push('/');
       }
 
-      const alert = <Alert variant="green" message="Login Success" />;
+      const alert = (
+        <Alert
+          variant="green"
+          message="Login Success"
+          onClick={() => {
+            setMessage(null);
+          }}
+        />
+      );
       setMessage(alert);
+
+      setForm({
+        email: '',
+        password: '',
+      });
     } catch (error) {
-      const alert = <Alert variant="red" message="Login Failed" />;
+      const alert = (
+        <Alert
+          variant="red"
+          message="Login Failed"
+          onClick={() => {
+            setMessage(null);
+          }}
+        />
+      );
       setMessage(alert);
 
       console.log(error);

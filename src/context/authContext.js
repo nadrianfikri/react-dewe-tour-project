@@ -2,6 +2,7 @@ import { createContext, useReducer } from 'react';
 
 const initialValue = {
   isLogin: false,
+  isLoading: false,
   user: {},
 };
 
@@ -17,6 +18,7 @@ function reducer(state, action) {
 
       return {
         isLogin: true,
+        isLoading: true,
         user: payload,
       };
 
