@@ -79,7 +79,7 @@ function InputImage(props) {
       <label htmlFor={props.labelFor} className="w-max text-yellow-500 bg-gray-200 rounded-md text-lg flex gap-10 cursor-pointer p-2 border-2 border-gray-300">
         Attach Here <img src="/assets/icons/attach.svg" alt="icon" />
       </label>
-      <input onChange={props.onChange} type="file" hidden id="image" name="image" />
+      <input onChange={props.onChange} type="file" hidden id="images" name="images" multiple />
     </div>
   );
 }

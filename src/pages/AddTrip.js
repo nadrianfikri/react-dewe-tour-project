@@ -1,69 +1,100 @@
-import { useState } from 'react';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import { Form, FormGroup, TextArea, InputSubmit, InputImage, Select, Option, DoubleInput } from '../components/Form';
 
+import { useState, useEffect } from 'react';
 import { useHistory } from 'react-router-dom';
+import { API } from '../config/api';
 
 function AddTrip() {
-  const history = useHistory();
+  let history = useHistory();
+  // console.clear();
+  const title = 'Admin Add Trip';
+  document.title = `DeweTour | ${title} `;
 
-  const [state, setState] = useState({
-    id: '',
-    name: '',
-    capacity: '',
-    price: '',
+  // store data
+  const [country, setCountry] = useState([]);
+  const [preview, setPreview] = useState(null);
+  const [form, setForm] = useState({
+    title: '',
     country: '',
-    thumbnailImage: '',
-    detailImage: '',
     accomodation: '',
     transportation: '',
     eat: '',
-    duration: {
-      day: '',
-      night: '',
-    },
+    day: '',
+    night: '',
     date: '',
-    description: '',
+    price: '',
+    quota: '',
+    desc: '',
+    images: '',
   });
 
+  // Fetching country data
+  const getCountry = async () => {
+    try {
+      const response = await API.get('/country');
+      setCountry(response.data.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  // handle change data on form
   const handleOnChange = (e) => {
-    setState((prevState) => ({
-      ...prevState,
-      [e.target.name]: e.target.value,
-    }));
+    setForm({
+      ...form,
+      [e.target.name]: e.target.type === 'file' ? e.target.files : e.target.value,
+    });
+
+    // Create image url for preview
+    if (e.target.type === 'file') {
+      let url = URL.createObjectURL(e.target.files[0]);
+      setPreview(url);
+    }
   };
 
-  const handleOnSubmit = (e) => {
-    e.preventDefault();
+  // console.log(form);
 
-    const dataLocalStorage = JSON.parse(localStorage.getItem('tour_data'));
+  const handleOnSubmit = async (e) => {
+    try {
+      e.preventDefault();
 
-    const data = {
-      id: dataLocalStorage.length + 1,
-      name: state.title,
-      capacity: `${state.quota}/15`,
-      price: state.price,
-      country: state.country,
-      thumbnailImage: state.image,
-      detailImage: ['detailAUS-1.png', 'detailAUS-2.png', 'detailAUS-3.png', 'detailAUS-4.png'],
-      accomodation: state.accomodation,
-      transportation: state.transportation,
-      eat: state.eat,
-      duration: {
-        day: state.day,
-        night: state.night,
-      },
-      date: state.date,
-      description: state.desc,
-    };
+      // Create Configuration Content-type
+      const config = {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      };
 
-    dataLocalStorage.push(data);
-    localStorage.setItem('tour_data', JSON.stringify(dataLocalStorage));
+      // Create store data with FormData as object here ...
+      const formData = new FormData();
 
-    console.log(dataLocalStorage);
-    history.push('/');
+      formData.set('title', form.title);
+      formData.set('accomodation', form.accomodation);
+      formData.set('transportation', form.transportation);
+      formData.set('eat', form.eat);
+      formData.set('day', form.day);
+      formData.set('night', form.night);
+      formData.set('date', form.date);
+      formData.set('quota', form.quota);
+      formData.set('desc', form.desc);
+      formData.set('images', form.images, form.images.name);
+      formData.set('country', document.getElementById('country').value);
+
+      // Insert product data here ...
+      const response = await API.post('/trip', formData, config);
+      console.log(response);
+      history.push('/add-trip');
+    } catch (error) {}
+
+    history.push('/add-trip');
   };
+
+  useEffect(() => {
+    getCountry();
+  }, []);
+
   return (
     <div className="pt-36 bg-gray-100 ">
       <Navbar class="bg-navbar" />
@@ -73,13 +104,12 @@ function AddTrip() {
           <h1 className="text-4xl font-bold">Income Trip</h1>
         </div>
         <div className="overflow-auto">
-          <Form action="/" submit={handleOnSubmit}>
+          <Form action="/" submit={handleOnSubmit} enctype="multipart/form-data">
             <FormGroup onChange={handleOnChange} labelFor="title" labelName="Title Trip" typeInput="text" name="title" id="title" />
-            <Select labelFor="country" labelName="Country" name="country" id="country">
-              <Option onChange={handleOnChange} value="Australia" field="Australia" />
-              <Option onChange={handleOnChange} value="South Korea" field="South Korea" />
-              <Option onChange={handleOnChange} value="Indonesia" field="Indonesia" />
-              <Option onChange={handleOnChange} value="Japan" field="Japan" />
+            <Select onChange={handleOnChange} labelFor="country" labelName="Country" name="country" id="country">
+              {country.map((data, index) => {
+                return <Option key={index} value={data.id} field={data.name} />;
+              })}
             </Select>
             <FormGroup onChange={handleOnChange} labelFor="accomodation" labelName="Accomodation" typeInput="text" name="accomodation" id="accomodation" />
             <FormGroup onChange={handleOnChange} labelFor="transportation" labelName="Transportation" typeInput="text" name="transportation" id="transportation" />
@@ -89,7 +119,20 @@ function AddTrip() {
             <FormGroup onChange={handleOnChange} labelFor="price" labelName="Price" typeInput="number" name="price" id="price" />
             <FormGroup onChange={handleOnChange} labelFor="quota" labelName="Quota" typeInput="number" name="quota" id="quota" />
             <TextArea onChange={handleOnChange} labelFor="desc" labelName="Description" name="desc" id="desc" />
-            <InputImage onChange={handleOnChange} labelFor="image" labelName="Image" />
+            {preview && (
+              <div className="flex gap-2">
+                <img
+                  src={preview}
+                  style={{
+                    maxWidth: '150px',
+                    maxHeight: '150px',
+                    objectFit: 'cover',
+                  }}
+                  alt="preview"
+                />
+              </div>
+            )}
+            <InputImage onChange={handleOnChange} labelFor="images" labelName="Images" />
             <InputSubmit value="Add Trip" />
           </Form>
         </div>

@@ -59,7 +59,9 @@ function Login() {
 
       // role user check
       if (response.data.data.role === 'admin') {
-        history.push('/income-trip');
+        setTimeout(() => {
+          history.push('/income-trip');
+        }, 1000);
       } else {
         history.push('/');
       }
@@ -74,6 +76,10 @@ function Login() {
         />
       );
       setMessage(alert);
+
+      setTimeout(() => {
+        setMessage(null);
+      }, 1500);
 
       setForm({
         email: '',
@@ -90,6 +96,10 @@ function Login() {
         />
       );
       setMessage(alert);
+
+      setTimeout(() => {
+        setMessage(null);
+      }, 1500);
 
       console.log(error);
     }

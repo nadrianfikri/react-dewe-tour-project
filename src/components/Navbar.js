@@ -10,10 +10,6 @@ import { AuthContext } from '../context/authContext';
 function Navbar(props) {
   let history = useHistory();
   const [state, dispatch] = useContext(AuthContext);
-  // let isAdmin = false;
-  // if (state.user.status === 1) {
-  //   isAdmin = true;
-  // }
 
   const handleLogout = () => {
     dispatch({
