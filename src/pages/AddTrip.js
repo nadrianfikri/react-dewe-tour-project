@@ -1,5 +1,7 @@
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
+import Alert from '../components/Alert';
+
 import { Form, FormGroup, TextArea, InputSubmit, InputImage, Select, Option, DoubleInput } from '../components/Form';
 
 import { useState, useEffect } from 'react';
@@ -8,14 +10,15 @@ import { API } from '../config/api';
 
 function AddTrip() {
   let history = useHistory();
-  // console.clear();
+
   const title = 'Admin Add Trip';
   document.title = `DeweTour | ${title} `;
 
   // store data
   const [country, setCountry] = useState([]);
-  const [files, setFiles] = useState([]);
+  const [message, setMessage] = useState(null);
   const [preview, setPreview] = useState(null);
+
   const [form, setForm] = useState({
     title: '',
     country: '',
@@ -30,12 +33,6 @@ function AddTrip() {
     description: '',
     images: [],
   });
-
-  // const files = form.images;
-  // const arr = Array.from(files);
-  // const images = arr.map((file) => file.name);
-
-  // console.log(images);
 
   // Fetching country data
   const getCountry = async () => {
@@ -61,7 +58,6 @@ function AddTrip() {
     // Create image url for preview
     if (e.target.type === 'file') {
       const fileList = Array.from(e.target.files);
-      setFiles(fileList);
 
       const mappedFiles = fileList.map((file) => ({
         ...file,
@@ -107,13 +103,33 @@ function AddTrip() {
       // Insert product data here ...
       await API.post('/trip', formData, config);
 
+      const alert = (
+        <Alert
+          variant="green"
+          message="Add new data is successfull"
+          onClick={() => {
+            setMessage(null);
+          }}
+        />
+      );
+      setMessage(alert);
+
       setTimeout(() => {
         history.push('/income-trip');
-      }, 1000);
+        setMessage(null);
+      }, 1500);
     } catch (error) {
+      const alert = (
+        <Alert
+          variant="red"
+          message="Add data failed"
+          onClick={() => {
+            setMessage(null);
+          }}
+        />
+      );
+      setMessage(alert);
       console.log(error);
-
-      history.push('/add-trip');
     }
   };
 
@@ -151,8 +167,10 @@ function AddTrip() {
                 })}
             </div>
             <InputImage onChange={handleOnChange} labelFor="images" labelName="Images" />
+
             <InputSubmit value="Add Trip" />
           </Form>
+          {message && message}
         </div>
       </main>
       <Footer />
