@@ -1,10 +1,29 @@
 import { Link } from 'react-router-dom';
-import dataDestinations from '../assets/destination.json';
 import { Card2 } from '../components/Card';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 
+import { useState, useEffect } from 'react';
+import { API } from '../config/api';
+
 function IncomeTrip() {
+  // init var for store data
+  const [trips, setTrips] = useState([]);
+
+  // create func get product from api
+  const getTrips = async () => {
+    try {
+      const response = await API.get('/trip');
+      setTrips(response.data.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  // call function with useEffect
+  useEffect(() => {
+    getTrips();
+  }, []);
   return (
     <div className="pt-36 bg-gray-100 ">
       <Navbar class="bg-navbar" />
@@ -17,8 +36,17 @@ function IncomeTrip() {
           </Link>
         </div>
         <div className="group-content flex justify-center items-center flex-wrap">
-          {dataDestinations.map((data) => (
-            <Card2 title={data.name} img={data.thumbnailImage} capacity={data.capacity} price={data.price} country={data.country} />
+          {trips.map((data) => (
+            <Card2
+              //
+              id={data?.id}
+              title={data?.title}
+              img={data?.images[0]}
+              quotaFill="10"
+              quota={data?.quota}
+              price={data?.price}
+              country={data.country?.name}
+            />
           ))}
         </div>
       </main>

@@ -1,44 +1,85 @@
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
-import { useState, useContext } from 'react';
+import Alert from '../components/Alert';
+import { useState, useEffect, useContext } from 'react';
 import { useParams, useHistory } from 'react-router-dom';
-// import datas from '../assets/destination.json';
 
 import { AuthContext } from '../context/authContext';
+import { API } from '../config/api';
 
 function DetailTrip() {
-  const datas = JSON.parse(localStorage.getItem('tour_data'));
-  const { state } = useContext(AuthContext);
-
-  const history = useHistory();
+  let history = useHistory();
   const { id } = useParams();
+  const [state] = useContext(AuthContext);
 
-  let index = id - 1;
-  const [detail] = useState(datas[index]);
+  // store data
+  const [message, setMessage] = useState(null);
   const [count, setCount] = useState(1);
+  const [detailTrip, setDetailTrip] = useState(null);
 
-  const handleOnSubmit = (e) => {
-    e.preventDefault();
+  // create func get data detail trip
+  const getDetail = async () => {
+    try {
+      const response = await API.get(`/trip/${id}`);
+      setDetailTrip(response.data.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
-    const transaction = {
-      userId: id,
-      payment: {
-        status: 'Waiting Payment',
-        style: 'red',
-      },
-      qty: count,
-      price: detail.price,
-      total: count * detail.price,
-      image: '',
-    };
+  const handleOnSubmit = async (e) => {
+    try {
+      e.preventDefault();
 
-    localStorage.setItem('transaction', JSON.stringify([transaction]));
-    history.push('/payment');
+      const config = {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      };
+
+      const form = {
+        qty: count,
+      };
+
+      // convert form data to string
+      const body = JSON.stringify(form);
+
+      // insert data user for login process
+      await API.post(`/transaction/${detailTrip.id}`, body, config);
+
+      const alert = (
+        <Alert
+          variant="green"
+          message="Transaction Success. Let's go to Payment!!"
+          onClick={() => {
+            setMessage(null);
+          }}
+        />
+      );
+      setMessage(alert);
+
+      setTimeout(() => {
+        history.push('/payment');
+        setMessage(null);
+      }, 2000);
+    } catch (error) {
+      const alert = (
+        <Alert
+          variant="red"
+          message="Transaction Failed"
+          onClick={() => {
+            setMessage(null);
+          }}
+        />
+      );
+      setMessage(alert);
+      console.log(error);
+    }
   };
 
   const increment = () => {
     // set new value to state
-    setCount((prevState) => prevState + 1);
+    setCount(count === detailTrip.quota ? count : count + 1);
   };
 
   const decrement = () => {
@@ -52,85 +93,100 @@ function DetailTrip() {
     }).format(number);
   };
 
+  // call function with useEffect
+  useEffect(() => {
+    getDetail();
+  }, []);
   return (
-    <div className="pt-36 bg-gray-100">
-      <Navbar class="bg-navbar" />
-      <main className="px-auto lg:px-36">
-        <section className="mx-auto mb-10 w-auto lg:w-max px-2">
-          <div className=" px-4 pb-6 space-y-4">
-            <h1 className="text-4xl md:text-5xl font-bold">{`${detail.duration.day}D/${detail.duration.night}N ${detail.name}`}</h1>
-            <p className="text-2xl text-gray-400">{detail.country}</p>
-          </div>
-          <div className="pb-2">
-            <img className="rounded-lg" src={`/assets/images/details/${detail.detailImage[0]}`} alt="img" />
-          </div>
+    <>
+      <div className="pt-36 bg-gray-100">
+        <Navbar class="bg-navbar" />
 
-          <div className="flex overflow-auto justify-between gap-2">
-            <div className="flex-none w-1/2 md:w-auto">
-              <img src={`/assets/images/details/${detail.detailImage[1]}`} alt="img" />
-            </div>
-            <div className="flex-none w-1/2 md:w-auto">
-              <img src={`/assets/images/details/${detail.detailImage[2]}`} alt="img" />
-            </div>
-            <a href="/" className="flex-none w-1/2 md:w-auto relative ">
-              <img src={`/assets/images/details/${detail.detailImage[3]}`} alt="img" />
-              <p className="absolute top-1/2 left-1/2 transform -translate-y-1/2 -translate-x-1/2 text-white text-2xl font-bold">+5</p>
-            </a>
-          </div>
-        </section>
+        {detailTrip === null ? (
+          <div>loading</div>
+        ) : (
+          <>
+            <main className="px-auto lg:px-36">
+              <section className="mx-auto mb-10 w-auto lg:w-max px-2">
+                <div className=" px-4 pb-6 space-y-4">
+                  <h1 className="text-4xl md:text-5xl font-bold">{detailTrip?.title}</h1>
+                  <p className="text-2xl text-gray-400">{detailTrip?.country?.name}</p>
+                </div>
+                <div className="pb-2">
+                  <img className="rounded-lg" src={detailTrip?.images[0]} alt="img" />
+                </div>
 
-        <Article>
-          <Header title="Information Trip" />
-          <div className="flex overflow-auto justify-between space-x-8">
-            <ArticleBody title="Accomodation" icon="/assets/icons/hotel 1.svg" detail={detail.accomodation} />
-            <ArticleBody title="Transportation" icon="/assets/icons/plane 1.svg" detail={detail.transportation} />
-            <ArticleBody title="Eat" icon="/assets/icons/meal 1.svg" detail={detail.eat} />
-            <ArticleBody title="Duration" icon="/assets/icons/time 1.svg" detail={`${detail.duration.day} Day ${detail.duration.night} Night`} />
-            <ArticleBody title="Date Trip" icon="/assets/icons/calendar 1.svg" detail={detail.date} />
-          </div>
-        </Article>
-        <Article>
-          <Header title="Description" />
-          <ArticleDesc desc="Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.  It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum." />
-        </Article>
+                <div className="flex overflow-auto justify-between gap-2">
+                  <div className="flex-none w-1/2 md:w-auto">
+                    <img src={detailTrip?.images[1]} alt="img" />
+                  </div>
+                  <div className="flex-none w-1/2 md:w-auto">
+                    <img src={detailTrip?.images[2]} alt="img" />
+                  </div>
+                  <a href="/" className="flex-none w-1/2 md:w-auto relative ">
+                    <img src={detailTrip?.images[3]} alt="img" />
+                    <p className="absolute top-1/2 left-1/2 transform -translate-y-1/2 -translate-x-1/2 text-white text-2xl font-bold">+5</p>
+                  </a>
+                </div>
+              </section>
 
-        <Article>
-          <form action="/" method="post" onSubmit={handleOnSubmit}>
-            <div className="form-group border-b-2 flex justify-between items-center font-bold text-2xl">
-              <label className="flex-1 text-yellow-400" htmlFor="qty">
-                IDR. {rupiah(detail.price)}
-                <span className="text-black"> / Person</span>
-              </label>
-              <div className="flex flex-0 gap-2">
-                <button type="button" onClick={decrement}>
-                  <img src="/assets/icons/Minus.svg" alt="icon" />
-                </button>
-                <input type="number" name="qty" value={count} readOnly className="py-4 focus:outline-none bg-transparent text-center font-bold w-10 text-lg" />
-                <button type="button" onClick={increment}>
-                  <img src="/assets/icons/Plus.svg" alt="icon" />
-                </button>
-              </div>
-            </div>
-            <div className="form-group border-b-2 text-yellow-400 flex justify-between items-center font-bold text-2xl">
-              <label className="text-black" htmlFor="total">
-                Total:
-              </label>
-              <p className="py-4 focus:outline-none bg-transparent text-right font-bold ">IDR. {rupiah(detail.price * count)}</p>
-              <input type="number" hidden name="total" value={detail.price * count} />
-            </div>
-            <div className="form-group m-2 flex justify-end font-bold text-2xl">
-              {/* conditional btn */}
-              {state.isLogin ? (
-                <input type="submit" value="BOOK NOW" className=" mt-4 py-2 px-10 bg-yellow-400 text-right text-white font-bold text-lg rounded-md hover:bg-yellow-500 cursor-pointer " />
-              ) : (
-                <input disabled type="submit" value="BOOK NOW" className=" mt-4 py-2 px-10 opacity-50 bg-gray-400 text-right text-white font-bold text-lg rounded-md " />
-              )}
-            </div>
-          </form>
-        </Article>
-      </main>
-      <Footer />
-    </div>
+              <Article>
+                <Header title="Information Trip" />
+                <div className="flex overflow-auto justify-between space-x-8">
+                  <ArticleBody title="Accomodation" icon="/assets/icons/hotel 1.svg" detail={detailTrip?.accomodation} />
+                  <ArticleBody title="Transportation" icon="/assets/icons/plane 1.svg" detail={detailTrip?.transportation} />
+                  <ArticleBody title="Eat" icon="/assets/icons/meal 1.svg" detail={detailTrip?.eat} />
+                  <ArticleBody title="Duration" icon="/assets/icons/time 1.svg" detail={`${detailTrip?.day} Day ${detailTrip?.night} Night`} />
+                  <ArticleBody title="Date Trip" icon="/assets/icons/calendar 1.svg" detail={detailTrip?.dateTrip} />
+                </div>
+              </Article>
+              <Article>
+                <Header title="Description" />
+                <ArticleDesc desc={detailTrip.description} />
+              </Article>
+
+              <Article>
+                <form action="/" method="post" onSubmit={handleOnSubmit}>
+                  <div className="form-group border-b-2 flex justify-between items-center font-bold text-2xl">
+                    <label className="flex-1 text-yellow-400" htmlFor="qty">
+                      IDR. {rupiah(detailTrip?.price)}
+                      <span className="text-black"> / Person</span>
+                    </label>
+                    <div className="flex flex-0 gap-2">
+                      <button type="button" onClick={decrement}>
+                        <img src="/assets/icons/Minus.svg" alt="icon" />
+                      </button>
+                      <input type="number" name="qty" value={count} readOnly className="py-4 focus:outline-none bg-transparent text-center font-bold w-10 text-lg" />
+                      <button type="button" onClick={increment}>
+                        <img src="/assets/icons/Plus.svg" alt="icon" />
+                      </button>
+                    </div>
+                  </div>
+                  <div className="form-group border-b-2 text-yellow-400 flex justify-between items-center font-bold text-2xl">
+                    <label className="text-black" htmlFor="total">
+                      Total:
+                    </label>
+                    <p className="py-4 focus:outline-none bg-transparent text-right font-bold ">IDR. {rupiah(detailTrip?.price * count)}</p>
+                    <input type="number" hidden name="total" value={detailTrip?.price * count} />
+                  </div>
+                  <br />
+                  {message && message}
+                  <div className="form-group m-2 flex justify-end font-bold text-2xl">
+                    {/* conditional btn */}
+                    {state.isLogin ? (
+                      <input type="submit" value="BOOK NOW" className=" mt-4 py-2 px-10 bg-yellow-400 text-right text-white font-bold text-lg rounded-md hover:bg-yellow-500 cursor-pointer " />
+                    ) : (
+                      <input disabled type="submit" value="BOOK NOW" className=" mt-4 py-2 px-10 opacity-50 bg-gray-400 text-right text-white font-bold text-lg rounded-md " />
+                    )}
+                  </div>
+                </form>
+              </Article>
+            </main>
+            <Footer />
+          </>
+        )}
+      </div>
+    </>
   );
 }
 function Article({ children }) {

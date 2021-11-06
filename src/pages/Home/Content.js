@@ -1,8 +1,28 @@
 import { Card1, Card2 } from '../../components/Card';
-import dataDestinations from '../../assets/destination.json';
 import serveContent from '../../assets/serveContent.json';
 
+import { useState, useEffect } from 'react';
+import { API } from '../../config/api';
+
 function Content() {
+  // init var for store data
+  const [trips, setTrips] = useState([]);
+
+  // create func get product from api
+  const getTrips = async () => {
+    try {
+      const response = await API.get('/trip');
+      setTrips(response.data.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  // call function with useEffect
+  useEffect(() => {
+    getTrips();
+  }, []);
+
   return (
     <div id="content" className="flex flex-col justify-center items-center pb-10">
       <div id="service" className="flex flex-wrap justify-center  transform -translate-y-8  px-4">
@@ -16,8 +36,17 @@ function Content() {
           <h1>Group Tour</h1>
         </div>
         <div className="group-content container flex justify-center items-center flex-wrap">
-          {dataDestinations.map((data) => (
-            <Card2 id={data.id} day={data.duration.day} night={data.duration.night} title={data.name} img={data.thumbnailImage} capacity={data.capacity} price={data.price} country={data.country} />
+          {trips.map((data) => (
+            <Card2
+              //
+              id={data?.id}
+              title={data?.title}
+              img={data?.images[0]}
+              quotaFill="10"
+              quota={data?.quota}
+              price={data?.price}
+              country={data.country?.name}
+            />
           ))}
         </div>
       </div>

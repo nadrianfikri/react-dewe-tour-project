@@ -22,12 +22,12 @@ function Card2(props) {
     <div id="card" className="rounded-md bg-white p-2 m-5 w-350 h-350">
       <div className="card-img relative flex justify-center">
         <img className="rounded-md" src={props.img} alt="img" />
-        <p className="absolute top-3 rounded-bl-md rounded-tl-md right-0 px-3 py-1 bg-white text-sm">{props.capacity}</p>
+        <p className="absolute top-3 rounded-bl-md rounded-tl-md right-0 px-3 py-1 bg-white text-sm">
+          {props.quotaFill}/{props.quota}
+        </p>
       </div>
       <div className="card-title my-4 font-medium text-xl">
-        <Link to={`/detail-trip/${props.id}`}>
-          {props.day}D/{props.night}N {props.title}
-        </Link>
+        <Link to={`/detail-trip/${props.id}`}>{props.title}</Link>
       </div>
       <div className="card-body flex justify-between text-lg">
         <p className="text-yellow-400 font-black">
