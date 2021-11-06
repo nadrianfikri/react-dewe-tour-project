@@ -28,7 +28,7 @@ function ModalBody({ children }) {
 
 function Modal(props) {
   return (
-    <div id={props.id} className="modal hidden overflow-auto h-screen w-full fixed left-0 top-0 flex justify-center items-center bg-black bg-opacity-50 z-50 transition-all duration-500">
+    <div id={props.id} className="modal hidden overflow-auto h-screen w-full fixed left-0 top-0 flex justify-center items-center bg-black bg-opacity-50 z-50 transition duration-500">
       <div className={`relative overflow-auto bg-white rounded-lg shadow-xl  w-10/12 md:w-1/3 px-8 py-4 md:w-${props.w}`}>{props.children}</div>
     </div>
   );

@@ -1,6 +1,6 @@
 import logo from '../assets/images/logo-dewe.png';
 import { useContext } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useHistory } from 'react-router-dom';
 
 import Login from '../pages/Auth/Login';
 import Regist from '../pages/Auth/Regist';
@@ -8,16 +8,15 @@ import Dropdown, { DropdownItem } from './Dropdown';
 import { AuthContext } from '../context/authContext';
 
 function Navbar(props) {
-  const { state, dispatch } = useContext(AuthContext);
-  let isAdmin = false;
-  if (state.user.status === 1) {
-    isAdmin = true;
-  }
+  let history = useHistory();
+  const [state, dispatch] = useContext(AuthContext);
 
   const handleLogout = () => {
     dispatch({
       type: 'LOGOUT',
     });
+
+    history.push('/');
   };
 
   const handleLoginModal = () => {
@@ -63,7 +62,7 @@ function Navbar(props) {
                   <img className="w-50 h-50 object-cover rounded-full border-2 border-yellow-400" src="/assets/images/photo.png" alt="avatar" />
                 </button>
                 <Dropdown click={handleLogout}>
-                  {isAdmin ? (
+                  {state.user.role === 'admin' ? (
                     <>
                       <DropdownItem>
                         <img src="/assets/icons/journey 1.svg" alt="" />

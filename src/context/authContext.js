@@ -2,6 +2,7 @@ import { createContext, useReducer } from 'react';
 
 const initialValue = {
   isLogin: false,
+  isLoading: false,
   user: {},
 };
 
@@ -17,6 +18,7 @@ function reducer(state, action) {
 
       return {
         isLogin: true,
+        isLoading: true,
         user: payload,
       };
 
@@ -37,7 +39,7 @@ function reducer(state, action) {
 const AuthContextProvider = ({ children }) => {
   const [state, dispatch] = useReducer(reducer, initialValue);
 
-  return <AuthContext.Provider value={{ state, dispatch }}>{children}</AuthContext.Provider>;
+  return <AuthContext.Provider value={[state, dispatch]}>{children}</AuthContext.Provider>;
 };
 
 export default AuthContextProvider;

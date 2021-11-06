@@ -1,52 +1,70 @@
-import { useHistory } from 'react-router-dom';
-import { useState } from 'react';
-
 import { Modal, ModalTitle, ModalBody } from '../../components/Modal';
 import { Form, FormGroup, InputSubmit, DirectText } from '../../components/Form';
+import Alert from '../../components/Alert';
+
+import { useState, useContext } from 'react';
+import { useHistory } from 'react-router-dom';
+import { AuthContext } from '../../context/authContext';
+
+// get API config
+import { API } from '../../config/api';
 
 function Regist() {
   const history = useHistory();
 
-  const [state, setState] = useState({
-    name: '',
+  const [state, dispatch] = useContext(AuthContext);
+  const [message, setMessage] = useState(null);
+
+  const [form, setForm] = useState({
+    fullname: '',
     email: '',
     password: '',
     phone: '',
   });
 
+  const { fullname, email, password, phone } = form;
+
   const handleOnChange = (e) => {
-    setState((prevState) => ({
-      ...prevState,
+    setForm({
+      ...form,
       [e.target.name]: e.target.value,
-    }));
+    });
   };
+  // console.log(form);
 
-  const handleOnSubmit = (e) => {
-    e.preventDefault();
+  const handleOnSubmit = async (e) => {
+    try {
+      e.preventDefault();
+      // create config content-type
+      const config = {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      };
 
-    const userLocalStorage = JSON.parse(localStorage.getItem('user'));
-    const user = userLocalStorage.user;
+      // convert formdata to string
+      const body = JSON.stringify(form);
 
-    const data = {
-      id: user.length + 1,
-      name: state.name,
-      email: state.email,
-      password: state.password,
-      phone: state.phone,
-      status: 0,
-    };
+      // insert data user to database
+      const response = await API.post('/register', body, config);
+      // console.log(response);
 
-    user.push(data);
-    localStorage.setItem(
-      'user',
-      JSON.stringify({
-        isLogin: false,
-        user,
-      })
-    );
+      // notif
+      if (response.data.status === 'Success') {
+        const alert = <Alert variant="green" message="Success" />;
+        setMessage(alert);
+      } else {
+        const alert = <Alert variant="red" message="Failed" />;
+        setMessage(alert);
+      }
 
-    document.querySelector('#modalRegist').classList.toggle('hidden');
-    history.push('/');
+      document.querySelector('#modalRegist').classList.toggle('hidden');
+      history.push('/');
+    } catch (error) {
+      const alert = <Alert variant="red" message="Failed" />;
+      setMessage(alert);
+      console.log(error);
+    }
   };
 
   const handleRegistModal = () => {
@@ -58,12 +76,45 @@ function Regist() {
     <>
       <Modal id="modalRegist">
         <ModalTitle title="Register" />
+        {message && message}
         <ModalBody>
-          <Form action="/" submit={handleOnSubmit}>
-            <FormGroup onChange={handleOnChange} labelFor="name" labelName="Full Name" typeInput="name" name="name" />
-            <FormGroup onChange={handleOnChange} labelFor="email" labelName="Email" typeInput="email" name="email" />
-            <FormGroup onChange={handleOnChange} labelFor="password" labelName="Password" typeInput="password" name="password" />
-            <FormGroup onChange={handleOnChange} labelFor="phone" labelName="Phone" typeInput="number" name="phone" />
+          <Form submit={handleOnSubmit}>
+            <FormGroup
+              //
+              onChange={handleOnChange}
+              labelFor="name"
+              labelName="Full Name"
+              typeInput="text"
+              name="fullname"
+              value={fullname}
+            />
+            <FormGroup
+              //
+              onChange={handleOnChange}
+              labelFor="email"
+              labelName="Email"
+              typeInput="email"
+              name="email"
+              value={email}
+            />
+            <FormGroup
+              //
+              onChange={handleOnChange}
+              labelFor="password"
+              labelName="Password"
+              typeInput="password"
+              name="password"
+              value={password}
+            />
+            <FormGroup
+              //
+              onChange={handleOnChange}
+              labelFor="phone"
+              labelName="Phone"
+              typeInput="text"
+              name="phone"
+              value={phone}
+            />
             <InputSubmit value="Register" w="full" />
             <DirectText click={handleRegistModal} desc="Already have an account? " textLink="Login" />
           </Form>
