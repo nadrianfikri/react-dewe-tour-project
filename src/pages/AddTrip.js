@@ -14,6 +14,7 @@ function AddTrip() {
 
   // store data
   const [country, setCountry] = useState([]);
+  const [files, setFiles] = useState([]);
   const [preview, setPreview] = useState(null);
   const [form, setForm] = useState({
     title: '',
@@ -23,12 +24,18 @@ function AddTrip() {
     eat: '',
     day: '',
     night: '',
-    date: '',
+    dateTrip: '',
     price: '',
     quota: '',
-    desc: '',
-    images: '',
+    description: '',
+    images: [],
   });
+
+  // const files = form.images;
+  // const arr = Array.from(files);
+  // const images = arr.map((file) => file.name);
+
+  // console.log(images);
 
   // Fetching country data
   const getCountry = async () => {
@@ -40,6 +47,10 @@ function AddTrip() {
     }
   };
 
+  useEffect(() => {
+    getCountry();
+  }, []);
+
   // handle change data on form
   const handleOnChange = (e) => {
     setForm({
@@ -49,12 +60,18 @@ function AddTrip() {
 
     // Create image url for preview
     if (e.target.type === 'file') {
-      let url = URL.createObjectURL(e.target.files[0]);
-      setPreview(url);
+      const fileList = Array.from(e.target.files);
+      setFiles(fileList);
+
+      const mappedFiles = fileList.map((file) => ({
+        ...file,
+        preview: URL.createObjectURL(file),
+      }));
+
+      setPreview(mappedFiles);
     }
   };
-
-  // console.log(form);
+  console.log(form);
 
   const handleOnSubmit = async (e) => {
     try {
@@ -71,29 +88,34 @@ function AddTrip() {
       const formData = new FormData();
 
       formData.set('title', form.title);
+      formData.set('country_id', form.country);
       formData.set('accomodation', form.accomodation);
       formData.set('transportation', form.transportation);
       formData.set('eat', form.eat);
       formData.set('day', form.day);
       formData.set('night', form.night);
-      formData.set('date', form.date);
+      formData.set('dateTrip', form.dateTrip);
+      formData.set('price', form.price);
       formData.set('quota', form.quota);
-      formData.set('desc', form.desc);
-      formData.set('images', form.images, form.images.name);
-      formData.set('country', document.getElementById('country').value);
+      formData.set('description', form.description);
+
+      // iterate file bcs formData decline fileList
+      for (let i = 0; i < form.images.length; i++) {
+        formData.append('images', form.images[i]);
+      }
 
       // Insert product data here ...
-      const response = await API.post('/trip', formData, config);
-      console.log(response);
+      await API.post('/trip', formData, config);
+
+      setTimeout(() => {
+        history.push('/income-trip');
+      }, 1000);
+    } catch (error) {
+      console.log(error);
+
       history.push('/add-trip');
-    } catch (error) {}
-
-    history.push('/add-trip');
+    }
   };
-
-  useEffect(() => {
-    getCountry();
-  }, []);
 
   return (
     <div className="pt-36 bg-gray-100 ">
@@ -104,9 +126,12 @@ function AddTrip() {
           <h1 className="text-4xl font-bold">Income Trip</h1>
         </div>
         <div className="overflow-auto">
-          <Form action="/" submit={handleOnSubmit} enctype="multipart/form-data">
+          <Form submit={handleOnSubmit} enctype="multipart/form-data">
             <FormGroup onChange={handleOnChange} labelFor="title" labelName="Title Trip" typeInput="text" name="title" id="title" />
             <Select onChange={handleOnChange} labelFor="country" labelName="Country" name="country" id="country">
+              <option value="DEFAULT" disabled>
+                {' '}
+              </option>
               {country.map((data, index) => {
                 return <Option key={index} value={data.id} field={data.name} />;
               })}
@@ -115,23 +140,16 @@ function AddTrip() {
             <FormGroup onChange={handleOnChange} labelFor="transportation" labelName="Transportation" typeInput="text" name="transportation" id="transportation" />
             <FormGroup onChange={handleOnChange} labelFor="eat" labelName="Eat" typeInput="text" name="eat" id="eat" />
             <DoubleInput onChange={handleOnChange} labelFor="duration" labelName="Duration" typeInput="number" />
-            <FormGroup onChange={handleOnChange} labelFor="date" labelName="Date Trip" typeInput="date" name="date" id="date" />
+            <FormGroup onChange={handleOnChange} labelFor="date" labelName="Date Trip" typeInput="date" name="dateTrip" id="dateTrip" />
             <FormGroup onChange={handleOnChange} labelFor="price" labelName="Price" typeInput="number" name="price" id="price" />
             <FormGroup onChange={handleOnChange} labelFor="quota" labelName="Quota" typeInput="number" name="quota" id="quota" />
-            <TextArea onChange={handleOnChange} labelFor="desc" labelName="Description" name="desc" id="desc" />
-            {preview && (
-              <div className="flex gap-2">
-                <img
-                  src={preview}
-                  style={{
-                    maxWidth: '150px',
-                    maxHeight: '150px',
-                    objectFit: 'cover',
-                  }}
-                  alt="preview"
-                />
-              </div>
-            )}
+            <TextArea onChange={handleOnChange} labelFor="description" labelName="Description" name="description" id="description" />
+            <div className="flex flex-row flex-wrap gap-2">
+              {preview &&
+                preview.map((file) => {
+                  return <img className="w-40 h-40 object-cover object-center" src={file.preview} alt="preview" />;
+                })}
+            </div>
             <InputImage onChange={handleOnChange} labelFor="images" labelName="Images" />
             <InputSubmit value="Add Trip" />
           </Form>

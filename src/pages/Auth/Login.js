@@ -79,6 +79,7 @@ function Login() {
 
       setTimeout(() => {
         setMessage(null);
+        document.querySelector('#modalLogin').classList.add('hidden');
       }, 1500);
 
       setForm({
