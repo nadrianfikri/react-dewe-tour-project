@@ -1,37 +1,47 @@
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import Invoice from '../components/Invoice';
+import Box from '../components/Box';
+import Alert from '../components/Alert';
 
 import { Modal } from '../components/Modal';
 
-import { useContext } from 'react';
+import { useContext, useState, useEffect } from 'react';
 import { useHistory } from 'react-router-dom';
 import { AuthContext } from '../context/authContext';
-import Box from '../components/Box';
+import { API } from '../config/api';
 
 function Payment() {
-  const { state } = useContext(AuthContext);
   const history = useHistory();
+  const [state] = useContext(AuthContext);
+  const [trans, setTrans] = useState(null);
 
-  const tourData = JSON.parse(localStorage.getItem('tour_data'));
-  const dataTransaction = JSON.parse(localStorage.getItem('transaction'));
+  // create func getData transaction
+  const getData = async () => {
+    try {
+      const response = await API.get('/transaction');
+      const datas = response.data.data;
 
-  const transaction = dataTransaction[0];
-  const userId = transaction.userId;
-
-  const data = tourData[userId - 1];
-  const user = state.user;
+      const filteredData = datas.filter((data) => data.user.id === state.user.id && data.status === 'Waiting Payment');
+      setTrans(filteredData);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  useEffect(() => {
+    getData();
+  }, []);
 
   const handleOnSubmit = (e) => {
     e.preventDefault();
 
-    transaction.payment.status = 'Waiting Approve';
-    transaction.payment.style = 'yellow';
+    // transaction.payment.status = 'Waiting Approve';
+    // transaction.payment.style = 'yellow';
 
-    localStorage.setItem('transaction', JSON.stringify([transaction]));
+    // localStorage.setItem('transaction', JSON.stringify([transaction]));
 
-    document.querySelector('#paymentModal').classList.toggle('hidden');
-    history.push('/payment');
+    // document.querySelector('#paymentModal').classList.toggle('hidden');
+    // history.push('/payment');
   };
 
   const showModal = () => {
@@ -43,43 +53,54 @@ function Payment() {
       <Navbar class="bg-navbar" />
       <main className="container mx-auto overflow-auto pb-36">
         <form onSubmit={handleOnSubmit} action="/" encType="multypart/form-data">
-          <Box>
-            <Invoice
-              // data trip
-              date={data.date}
-              title={data.name}
-              country={data.country}
-              day={data.duration.day}
-              night={data.duration.night}
-              accomodation={data.accomodation}
-              transportation={data.transportation}
-              // transaction
-              style={transaction.payment.style}
-              status={transaction.payment.status}
-              attachment="/assets/images/qr-code 1.png"
-              proofDesc="TCK0101"
-              qty={transaction.qty}
-              total={transaction.total}
-              // user
-              userName={user.name}
-              userPhone={user.phone}
-            />
-          </Box>
+          {trans === null ? (
+            <div>Loading...</div>
+          ) : (
+            <>
+              {trans.map((data, index) => {
+                return (
+                  <Box key={index}>
+                    <Invoice
+                      // data trip
+                      date={data.trip.dateTrip}
+                      title={data.trip.title}
+                      country={data.trip.country?.name}
+                      day={data.trip.day}
+                      night={data.trip.night}
+                      accomodation={data.trip.accomodation}
+                      transportation={data.trip.transportation}
+                      // transaction
+                      style={data.status === 'Waiting Payment' || 'Canceled' ? 'red' : data.status === 'Waiting Approve' ? 'yellow' : 'green'}
+                      status={data.status}
+                      attachment={data.attachment}
+                      proofDesc="TCK0101"
+                      qty={data.qty}
+                      total={data.total}
+                      // user
+                      userName={data.user.fullname}
+                      userEmail={data.user.email}
+                      userPhone={data.user.phone}
+                    />
+                  </Box>
+                );
+              })}
+            </>
+          )}
 
           {/* conditional button */}
-          {transaction.payment.style !== 'red' ? (
-            <div className="hidden float-right my-6 pr-4 ">
-              <button onClick={showModal} type="button" className=" bg-yellow-400 py-2 px-20 text-lg text-white font-bold rounded-md">
-                Pay
-              </button>
-            </div>
-          ) : (
-            <div className=" float-right my-6 pr-4 ">
-              <button onClick={showModal} type="button" className=" bg-yellow-400 py-2 px-20 text-lg text-white font-bold rounded-md">
-                Pay
-              </button>
-            </div>
-          )}
+          {/* {transaction.payment.style !== 'red' ? ( */}
+          <div className="hidden float-right my-6 pr-4 ">
+            <button onClick={showModal} type="button" className=" bg-yellow-400 py-2 px-20 text-lg text-white font-bold rounded-md">
+              Pay
+            </button>
+          </div>
+          {/* ) : ( */}
+          <div className=" float-right my-6 pr-4 ">
+            <button onClick={showModal} type="button" className=" bg-yellow-400 py-2 px-20 text-lg text-white font-bold rounded-md">
+              Pay
+            </button>
+          </div>
+          {/* )} */}
 
           {/* ModaL */}
           <Modal id="paymentModal" w="max">

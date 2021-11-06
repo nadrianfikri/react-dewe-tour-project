@@ -42,9 +42,9 @@ function Invoice(props) {
       </section>
       <section className="flex flex-col overflow-auto">
         <Table>
-          <THeader col1="No" col2="Full Name" col3="Gender" col4="Phone" />
+          <THeader col1="No" col2="Full Name" col3="Email" col4="Phone" />
           <TBody>
-            <TData no="1" fullName={props.userName} gender="Male" phone={props.userPhone} qty={props.qty} />
+            <TData no="1" fullName={props.userName} email={props.userEmail} phone={props.userPhone} qty={props.qty} />
           </TBody>
           <TFoot total={`IDR. ${rupiah(props.total)}`} />
         </Table>
