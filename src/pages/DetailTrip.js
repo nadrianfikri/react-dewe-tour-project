@@ -21,11 +21,25 @@ function DetailTrip() {
   const getDetail = async () => {
     try {
       const response = await API.get(`/trip/${id}`);
-      setDetailTrip(response.data.data);
+      const data = response.data.data;
+      data.dateTrip = new Date(data.dateTrip).toLocaleDateString('en-GB', { year: 'numeric', month: 'long', day: 'numeric' });
+
+      setDetailTrip(data);
     } catch (error) {
       console.log(error);
     }
   };
+
+  // setTimeout(() => {
+  //   const date = new Date(detailTrip?.dateTrip);
+  //   const formatedDate = date.toLocaleDateString('en-GB', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+
+  //   //   setDetailTrip({
+  //   //     dateTrip: formatedDate,
+  //   //   });
+  // }, 1000);
+
+  // console.log(new Date(detailTrip.dateTrip).toLocaleDateString('en-GB', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }));
 
   const handleOnSubmit = async (e) => {
     try {

@@ -4,48 +4,56 @@ import Box from '../components/Box';
 import Invoice from '../components/Invoice';
 import { Modal } from '../components/Modal';
 import { Table, THeader, TBody, TData2 } from '../components/Table';
-import users from '../assets/user.json';
 
+import { useState, useEffect } from 'react';
 import { useHistory } from 'react-router-dom';
+import { API } from '../config/api';
 
 function ListTransaction() {
   const history = useHistory();
 
-  const tourData = JSON.parse(localStorage.getItem('tour_data'));
-  const dataTransaction = JSON.parse(localStorage.getItem('transaction'));
+  // store data
+  const [list, setList] = useState([]);
+  const [detailTrans, setDetailTrans] = useState([]);
 
-  const user = users[1];
-  const transaction = dataTransaction[0];
-  const userId = transaction.userId;
+  // get data from database
+  const getData = async () => {
+    try {
+      const response = await API.get('/transaction');
+      const datas = response.data.data;
+      const mappedData = datas.map((data) => {
+        data.trip.dateTrip = new Date(data.trip.dateTrip).toLocaleDateString('en-GB', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+        return data;
+      });
 
-  const data = tourData[userId - 1];
-
-  let statusPayment = 'Pending';
-  if (transaction.payment.status === 'Canceled') {
-    statusPayment = 'Cancel';
-  } else if (transaction.payment.status === 'Approve') {
-    statusPayment = 'Approve';
-  } else {
-    statusPayment = 'Pending';
-  }
+      setList(mappedData);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  useEffect(() => {
+    getData();
+  }, []);
 
   const handleCancel = () => {
-    transaction.payment.status = 'Canceled';
-    transaction.payment.style = 'red';
-
-    localStorage.setItem('transaction', JSON.stringify([transaction]));
+    // transaction.payment.status = 'Canceled';
+    // transaction.payment.style = 'red';
 
     document.querySelector('#modalApprove').classList.toggle('hidden');
     history.push('/list-transaction');
   };
   const handleApprove = () => {
-    transaction.payment.status = 'Approve';
-    transaction.payment.style = 'green';
-
-    localStorage.setItem('transaction', JSON.stringify([transaction]));
+    // transaction.payment.status = 'Approve';
+    // transaction.payment.style = 'green';
 
     document.querySelector('#modalApprove').classList.toggle('hidden');
     history.push('/list-transaction');
+  };
+  const handleOpen = (e) => {
+    const detailData = list.find((item) => item.id == e.target.id);
+    setDetailTrans(detailData);
+
+    document.querySelector('#modalApprove').classList.toggle('hidden');
   };
 
   const handleClose = () => {
@@ -60,8 +68,21 @@ function ListTransaction() {
           <Table>
             <THeader col1="No" col2="Users" col3="Trip" col4="Bukti Transfer" col5="Status Payment" col6="Action" />
             <TBody>
-              {dataTransaction.map((result, index) => {
-                return <TData2 no={index + 1} user={user.name} trip={`${data.duration.day}D/${data.duration.night}N  ${data.name}`} proofTF={result.image} status={statusPayment} statusStyle={`text-${transaction.payment.style}-400`} />;
+              {list.map((data, index) => {
+                return (
+                  <TData2
+                    key={index}
+                    //
+                    no={index + 1}
+                    user={data.user?.fullname}
+                    trip={data.trip?.title}
+                    proofTF={data.attachment}
+                    status={data.status}
+                    statusStyle={`text-${data.status === 'Approve' ? 'green' : data.status === 'Waiting Approve' ? 'yellow' : 'red'}-400`}
+                    onClick={handleOpen}
+                    id={data.id}
+                  />
+                );
               })}
             </TBody>
           </Table>
@@ -74,23 +95,24 @@ function ListTransaction() {
             </button>
             <Invoice
               // data trip
-              date={data.date}
-              title={data.name}
-              country={data.country}
-              day={data.duration.day}
-              night={data.duration.night}
-              accomodation={data.accomodation}
-              transportation={data.transportation}
+              date={detailTrans.trip?.dateTrip}
+              title={detailTrans.trip?.title}
+              country={detailTrans.trip?.country}
+              day={detailTrans.trip?.day}
+              night={detailTrans.trip?.night}
+              accomodation={detailTrans.trip?.accomodation}
+              transportation={detailTrans.trip?.transportation}
               // transaction
-              style={transaction.payment.style}
-              status={transaction.payment.status}
-              attachment="/assets/images/qr-code 1.png"
+              status={detailTrans.status}
+              style={detailTrans.status === 'Approve' ? 'green' : detailTrans.status === 'Waiting Approve' ? 'yellow' : 'red'}
+              attachment={detailTrans.attachment}
               proofDesc="TCK0101"
-              qty={transaction.qty}
-              total={transaction.total}
+              qty={detailTrans.qty}
+              total={detailTrans.total}
               // user
-              userName={user.name}
-              userPhone={user.phone}
+              userName={detailTrans.user?.fullname}
+              userEmail={detailTrans.user?.email}
+              userPhone={detailTrans.user?.phone}
             />
             <section className="flex justify-end text-white gap-4 ">
               <button onClick={handleCancel} className="px-4 py-1 rounded-md bg-red-500 font-bold">

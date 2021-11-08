@@ -47,6 +47,7 @@ function Login() {
       // insert data user for login process
       const response = await API.post('/login', body, config);
       setAuthToken(response.data.data.token);
+      console.log(response.data.data);
 
       //checking process
       if (response?.status === 200) {

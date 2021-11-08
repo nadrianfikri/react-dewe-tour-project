@@ -18,8 +18,12 @@ function Profile() {
     try {
       const response = await API.get('/transaction');
       const datas = response.data.data;
+      const mappedData = datas.map((data) => {
+        data.trip.dateTrip = new Date(data.trip.dateTrip).toLocaleDateString('en-GB', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+        return data;
+      });
 
-      const filteredData = datas.filter((data) => data.user.id === state.user.id && data.status !== 'Waiting Payment').reverse();
+      const filteredData = mappedData.filter((data) => data.user.id === state.user.id && data.status !== 'Waiting Payment').reverse();
       setTrans(filteredData);
     } catch (error) {
       console.log(error);
@@ -28,8 +32,7 @@ function Profile() {
 
   useEffect(() => {
     getData();
-  }, []);
-  console.log(state);
+  }, [state]);
 
   return (
     <div className="pt-36 bg-gray-100 ">
@@ -44,10 +47,10 @@ function Profile() {
                 <header className="pb-8">
                   <h1 className="text-4xl font-bold">Personal Info</h1>
                 </header>
-                <DataUser icon="/assets/icons/name.svg" desc="Full Name" name={state?.user.fullname} />
-                <DataUser icon="/assets/icons/email.svg" desc="Email" name={state?.user.email} />
-                <DataUser icon="/assets/icons/phone.svg" desc="Mobile Phone" name={state?.phone} />
-                <DataUser icon="/assets/icons/loc.svg" desc="Address" name={state?.address} />
+                <DataUser icon="/assets/icons/name.svg" desc="Full Name" name={state?.user?.fullname} />
+                <DataUser icon="/assets/icons/email.svg" desc="Email" name={state?.user?.email} />
+                <DataUser icon="/assets/icons/phone.svg" desc="Mobile Phone" name={state?.user?.phone} />
+                <DataUser icon="/assets/icons/loc.svg" desc="Address" name={state?.user?.address} />
               </div>
 
               <div className="flex flex-col gap-2">
@@ -74,9 +77,10 @@ function Profile() {
                       accomodation={data.trip.accomodation}
                       transportation={data.trip.transportation}
                       // transaction
-                      style={data.status === 'Waiting Payment' || 'Canceled' ? 'red' : data.status === 'Waiting Approve' ? 'yellow' : 'green'}
+                      style={data.status === 'Approve' ? 'green' : data.status === 'Waiting Approve' ? 'yellow' : 'red'}
                       status={data.status}
                       attachment={data.attachment}
+                      disabled={'disabled'}
                       proofDesc="TCK0101"
                       qty={data.qty}
                       total={data.total}

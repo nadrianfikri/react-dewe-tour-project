@@ -67,7 +67,6 @@ function AddTrip() {
       setPreview(mappedFiles);
     }
   };
-  console.log(form);
 
   const handleOnSubmit = async (e) => {
     try {
