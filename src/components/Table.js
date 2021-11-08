@@ -45,7 +45,7 @@ function TData(props) {
     <tr className="border-b border-grey-600 text-gray-400">
       <td>{props.no}</td>
       <td>{props.fullName}</td>
-      <td>{props.gender}</td>
+      <td>{props.email}</td>
       <td>{props.phone}</td>
       <td className="text-black font-bold py-2">Qty</td>
       <td className="text-black font-bold py-2">:</td>

@@ -15,14 +15,23 @@ function Payment() {
   const history = useHistory();
   const [state] = useContext(AuthContext);
   const [trans, setTrans] = useState(null);
+  const [preview, setPreview] = useState(null); //For image preview
 
+  // Create Variabel for store product data here ...
+  const [form, setForm] = useState({
+    image: '',
+    status: 'Waiting Payment',
+    transId: '',
+  });
+
+  // FETCHING DATA
   // create func getData transaction
   const getData = async () => {
     try {
       const response = await API.get('/transaction');
       const datas = response.data.data;
 
-      const filteredData = datas.filter((data) => data.user.id === state.user.id && data.status === 'Waiting Payment');
+      const filteredData = datas.filter((data) => data.user.id === state.user.id && data.status === 'Waiting Payment').reverse();
       setTrans(filteredData);
     } catch (error) {
       console.log(error);
@@ -31,6 +40,30 @@ function Payment() {
   useEffect(() => {
     getData();
   }, []);
+
+  // UPDATE DATA TRANSACTION
+  // get transId form value
+  // const elTransId = document.getElementsByName('transId');
+
+  // console.log(el[0].value);
+
+  // Create function for handle change data on form here ...
+
+  const handleChange = (e) => {
+    setForm({
+      ...form,
+      status: 'Waiting Approve',
+      transId: 8,
+      [e.target.name]: e.target.type === 'file' ? e.target.files : e.target.value,
+    });
+
+    // Create image url for preview
+    if (e.target.type === 'file') {
+      let url = URL.createObjectURL(e.target.files[0]);
+      setPreview(url);
+    }
+  };
+  console.log(form);
 
   const handleOnSubmit = (e) => {
     e.preventDefault();
@@ -57,50 +90,54 @@ function Payment() {
             <div>Loading...</div>
           ) : (
             <>
-              {trans.map((data, index) => {
+              {trans.map((data) => {
                 return (
-                  <Box key={index}>
-                    <Invoice
-                      // data trip
-                      date={data.trip.dateTrip}
-                      title={data.trip.title}
-                      country={data.trip.country?.name}
-                      day={data.trip.day}
-                      night={data.trip.night}
-                      accomodation={data.trip.accomodation}
-                      transportation={data.trip.transportation}
-                      // transaction
-                      style={data.status === 'Waiting Payment' || 'Canceled' ? 'red' : data.status === 'Waiting Approve' ? 'yellow' : 'green'}
-                      status={data.status}
-                      attachment={data.attachment}
-                      proofDesc="TCK0101"
-                      qty={data.qty}
-                      total={data.total}
-                      // user
-                      userName={data.user.fullname}
-                      userEmail={data.user.email}
-                      userPhone={data.user.phone}
-                    />
-                  </Box>
+                  <>
+                    <Box key={data.id}>
+                      <Invoice
+                        // data trip
+                        date={data.trip.dateTrip}
+                        title={data.trip.title}
+                        country={data.trip.country?.name}
+                        day={data.trip.day}
+                        night={data.trip.night}
+                        accomodation={data.trip.accomodation}
+                        transportation={data.trip.transportation}
+                        // transaction
+                        style={data.status === 'Waiting Payment' || 'Canceled' ? 'red' : data.status === 'Waiting Approve' ? 'yellow' : 'green'}
+                        status={data.status}
+                        attachment={preview && data.id === form.transId ? preview : data.attachment}
+                        proofDesc={data.status === 'Approve' ? 'No. Ticket' : 'Upload proof of payment'}
+                        qty={data.qty}
+                        total={data.total}
+                        // user
+                        userName={data.user.fullname}
+                        userEmail={data.user.email}
+                        userPhone={data.user.phone}
+                        onChange={handleChange}
+                      />
+                      {/* {preview && <img className="w-40 h-40 object-cover object-center" src={preview} alt="preview" />} */}
+                      <input hidden name="transId" onChange={handleChange} type="number" value={data.id} />
+                      {/* conditional button */}
+                      {/* {transaction.payment.style !== 'red' ? ( */}
+                      <div className="hidden ml-auto my-6 pr-4 ">
+                        <button onClick={showModal} type="button" className=" bg-yellow-400 py-2 px-20 text-lg text-white font-bold rounded-md">
+                          Pay
+                        </button>
+                      </div>
+                      {/* ) : ( */}
+                      <div className="ml-auto my-6 pr-4 ">
+                        <button onClick={showModal} type="button" className=" bg-yellow-400 hover:bg-yellow-500 transition duration-300 py-2 px-20 text-lg text-white font-bold rounded-md">
+                          Pay
+                        </button>
+                      </div>
+                      {/* )} */}
+                    </Box>
+                  </>
                 );
               })}
             </>
           )}
-
-          {/* conditional button */}
-          {/* {transaction.payment.style !== 'red' ? ( */}
-          <div className="hidden float-right my-6 pr-4 ">
-            <button onClick={showModal} type="button" className=" bg-yellow-400 py-2 px-20 text-lg text-white font-bold rounded-md">
-              Pay
-            </button>
-          </div>
-          {/* ) : ( */}
-          <div className=" float-right my-6 pr-4 ">
-            <button onClick={showModal} type="button" className=" bg-yellow-400 py-2 px-20 text-lg text-white font-bold rounded-md">
-              Pay
-            </button>
-          </div>
-          {/* )} */}
 
           {/* ModaL */}
           <Modal id="paymentModal" w="max">

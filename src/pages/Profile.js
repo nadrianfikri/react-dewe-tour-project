@@ -19,7 +19,7 @@ function Profile() {
       const response = await API.get('/transaction');
       const datas = response.data.data;
 
-      const filteredData = datas.filter((data) => data.user.id === state.user.id);
+      const filteredData = datas.filter((data) => data.user.id === state.user.id && data.status !== 'Waiting Payment').reverse();
       setTrans(filteredData);
     } catch (error) {
       console.log(error);
@@ -28,7 +28,8 @@ function Profile() {
 
   useEffect(() => {
     getData();
-  }, [trans]);
+  }, []);
+  console.log(state);
 
   return (
     <div className="pt-36 bg-gray-100 ">
@@ -43,10 +44,10 @@ function Profile() {
                 <header className="pb-8">
                   <h1 className="text-4xl font-bold">Personal Info</h1>
                 </header>
-                <DataUser icon="/assets/icons/name.svg" desc="Full Name" name={trans[0].user.fullname} />
-                <DataUser icon="/assets/icons/email.svg" desc="Email" name={trans[0].user.email} />
-                <DataUser icon="/assets/icons/phone.svg" desc="Mobile Phone" name={trans[0].phone} />
-                <DataUser icon="/assets/icons/loc.svg" desc="Address" name={trans[0].address} />
+                <DataUser icon="/assets/icons/name.svg" desc="Full Name" name={state?.user.fullname} />
+                <DataUser icon="/assets/icons/email.svg" desc="Email" name={state?.user.email} />
+                <DataUser icon="/assets/icons/phone.svg" desc="Mobile Phone" name={state?.phone} />
+                <DataUser icon="/assets/icons/loc.svg" desc="Address" name={state?.address} />
               </div>
 
               <div className="flex flex-col gap-2">
