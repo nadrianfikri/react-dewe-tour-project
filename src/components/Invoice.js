@@ -15,9 +15,7 @@ function Invoice(props) {
         </div>
         <div className="text-right space-y-2">
           <h1 className="font-bold text-4xl">Booking</h1>
-          <p className="text-gray-400 text-lg">
-            <span className="font-bold">Saturday</span>, {props.date}
-          </p>
+          <p className="text-gray-400 text-lg">{props.date}</p>
         </div>
       </section>
       <section className="flex justify-between items-center overflow-auto">
@@ -37,14 +35,14 @@ function Invoice(props) {
           <InfoTrip title="Transportation" desc={props.transportation} />
         </div>
         <div className="flex flex-col justify-between text-center gap-8">
-          <UploadProof image={props.attachment} desc={props.proofDesc} />
+          <UploadProof onChange={props.onChange} image={props.attachment} desc={props.proofDesc} disabled={props.disabled} />
         </div>
       </section>
       <section className="flex flex-col overflow-auto">
         <Table>
-          <THeader col1="No" col2="Full Name" col3="Gender" col4="Phone" />
+          <THeader col1="No" col2="Full Name" col3="Email" col4="Phone" />
           <TBody>
-            <TData no="1" fullName={props.userName} gender="Male" phone={props.userPhone} qty={props.qty} />
+            <TData no="1" fullName={props.userName} email={props.userEmail} phone={props.userPhone} qty={props.qty} />
           </TBody>
           <TFoot total={`IDR. ${rupiah(props.total)}`} />
         </Table>
@@ -65,8 +63,11 @@ export function InfoTrip(props) {
 export function UploadProof(props) {
   return (
     <div>
-      <img className="h-36 border-2 border-gray-600 rounded" src={props.image} alt="img" />
-      <dd className="text-sm text-gray-400">{props.desc}</dd>
+      <label className={`cursor-pointer${props.disabled}`} htmlFor={`attachment${props.disabled}`}>
+        <img className="h-36 border-2 border-gray-600 rounded" src={props.image} alt="img" />
+      </label>
+      <input onChange={props.onChange} type="file" id="attachment" name="image" hidden />
+      <dd className="text-sm mt-2 text-gray-400">{props.desc}</dd>
     </div>
   );
 }

@@ -1,5 +1,5 @@
-import { useContext, useEffect } from 'react';
-import { Route, Switch, useHistory } from 'react-router-dom';
+import { useContext, useEffect, useState } from 'react';
+import { Route, Switch, useHistory, Redirect } from 'react-router-dom';
 import { AuthContext } from './context/authContext';
 
 import ScrollToTop from './components/ScrollToTop';
@@ -12,6 +12,7 @@ import Payment from './pages/Payment';
 import IncomeTrip from './pages/IncomeTrip';
 import ListTransaction from './pages/ListTransaction';
 import AddTrip from './pages/AddTrip';
+import Notfound from './components/Notfound';
 
 // get API config and setAuthToken
 import { API, setAuthToken } from './config/api';
@@ -26,6 +27,7 @@ function App() {
 
   // init authContext
   const [state, dispatch] = useContext(AuthContext);
+  const [loading, setLoading] = useState(null);
 
   // create function for check user token
   const checkUser = async () => {
@@ -52,30 +54,40 @@ function App() {
   // Call function check user with useEffect
   useEffect(() => {
     checkUser();
+    setLoading(true);
   }, []);
 
   return (
     <>
-      {/* {state.isLoading ? ( */}
-      {/* <> */}
       <ScrollToTop />
-      <Switch>
-        <Route exact path="/" component={Home} />
-        <Route exact path="/detail-trip/:id" component={DetailTrip} />
-        <Route exact path="/login" component={Login} />
-        <Route exact path="/register" component={Regist} />
-        <Route exact path="/profile" component={Profile} />
-        <Route exact path="/payment" component={Payment} />
-        <Route exact path="/list-transaction" component={ListTransaction} />
-        <Route exact path="/income-trip" component={IncomeTrip} />
-        <Route exact path="/add-trip" component={AddTrip} />
-      </Switch>
-      {/* </>
-      ) : (
-        <div className="flex h-screen justify-center items-center ">
-          <p className="animate-spin text-5xl">+</p>
-        </div>
-      )} */}
+      <>
+        {loading === null ? (
+          <div className="flex h-screen justify-center items-center ">
+            <p className="animate-spin text-5xl">+</p>
+          </div>
+        ) : (
+          <Switch>
+            <Route exact path="/" component={Home} />
+            <Route exact path="/detail-trip/:id" component={DetailTrip} />
+            <Route exact path="/login" component={Login} />
+            <Route exact path="/register" component={Regist} />
+            {state.user.role === 'admin' ? (
+              <Switch>
+                <Route exact path="/list-transaction" component={ListTransaction} />
+                <Route exact path="/income-trip" component={IncomeTrip} />
+                <Route exact path="/add-trip" component={AddTrip} />
+                <Route path="*" component={Notfound} />
+              </Switch>
+            ) : (
+              <Switch>
+                <Route exact path="/profile" component={Profile} />
+                <Route exact path="/payment" component={Payment} />
+                <Route path="*" component={Notfound} />
+              </Switch>
+            )}
+          </Switch>
+        )}
+      </>
     </>
   );
 }

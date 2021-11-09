@@ -20,20 +20,21 @@ function TFoot(props) {
   );
 }
 function TData2(props) {
-  const showModal = () => {
-    document.querySelector('#modalApprove').classList.toggle('hidden');
-  };
-
   return (
     <tr className="border-b border-grey-600">
       <td className="px-2">{props.no}</td>
       <td>{props.user}</td>
       <td>{props.trip}</td>
-      <td>{props.proofTF}</td>
+      <td>
+        <a href={props.proofTF} target="_blank" rel="noreferrer">
+          <img className="w-20" src={props.proofTF} alt="proof" />{' '}
+        </a>
+      </td>
+      <td>{props.updatedAt}</td>
       <td className={`font-bold ${props.statusStyle} py-4`}>{props.status}</td>
       <td>
-        <button onClick={showModal} type="button">
-          <img src="/assets/icons/search.svg" alt="icon" />
+        <button onClick={props.onClick} type="button">
+          <img id={props.id} src="/assets/icons/search.svg" alt="icon" />
         </button>
       </td>
     </tr>
@@ -45,7 +46,7 @@ function TData(props) {
     <tr className="border-b border-grey-600 text-gray-400">
       <td>{props.no}</td>
       <td>{props.fullName}</td>
-      <td>{props.gender}</td>
+      <td>{props.email}</td>
       <td>{props.phone}</td>
       <td className="text-black font-bold py-2">Qty</td>
       <td className="text-black font-bold py-2">:</td>
@@ -67,6 +68,7 @@ function THeader(props) {
         <th>{props.col4}</th>
         <th>{props.col5}</th>
         <th>{props.col6}</th>
+        <th>{props.col7}</th>
       </tr>
     </thead>
   );

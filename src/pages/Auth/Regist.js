@@ -52,17 +52,28 @@ function Regist() {
       // notif
       if (response.data.status === 'Success') {
         const alert = <Alert variant="green" message="Success" />;
+        setForm({
+          fullname: '',
+          email: '',
+          password: '',
+          phone: '',
+        });
         setMessage(alert);
       } else {
-        const alert = <Alert variant="red" message="Failed" />;
+        const alert = <Alert variant="red" message={response.data.message} />;
         setMessage(alert);
       }
-
-      document.querySelector('#modalRegist').classList.toggle('hidden');
-      history.push('/');
+      setTimeout(() => {
+        setMessage(null);
+        document.querySelector('#modalRegist').classList.toggle('hidden');
+        history.push('/');
+      }, 1500);
     } catch (error) {
       const alert = <Alert variant="red" message="Failed" />;
       setMessage(alert);
+      setTimeout(() => {
+        setMessage(null);
+      }, 1000);
       console.log(error);
     }
   };
