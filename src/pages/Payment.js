@@ -18,16 +18,16 @@ function Payment() {
   const [preview, setPreview] = useState(null); //For image preview
 
   // Create Variabel for form data here ...
-  const [transId, setTransId] = useState([null]);
-  const [prevData, setPrevData] = useState([]);
+  const [id, setId] = useState([null]);
+  // const [prevData, setPrevData] = useState([]);
   const [form, setForm] = useState({
-    image: '',
+    image: [],
     status: '',
   });
 
   // FETCHING DATA
   // create func getData transaction
-  const getData = async () => {
+  const getDataTrans = async () => {
     try {
       const response = await API.get('/transaction');
       const datas = response.data.data;
@@ -60,20 +60,19 @@ function Payment() {
       setPreview(url);
     }
   };
-  // console.log(form);
 
   // create function to show the modal
   const showModal = async (e) => {
-    if (form.image === '') {
+    if (form.image == []) {
       alert('Please upload your proof!!');
       return;
     }
 
     const id = Number(e.target.id);
-    setTransId(id);
+    setId(id);
 
     const detailData = await trans.find((item) => item.id == e.target.id);
-    setPrevData(detailData);
+    // setPrevData(detailData);
 
     document.querySelector('#paymentModal').classList.toggle('hidden');
   };
@@ -92,95 +91,94 @@ function Payment() {
 
       // Create store data with FormData as object
       const formData = new FormData();
-      formData.set('qty', toString(prevData.qty));
-      formData.set('total', toString(prevData.total));
-      formData.set('status', form.status);
       formData.set('attachment', form.image[0]);
-      formData.set('trip_id', toString(prevData.trip?.id));
-      formData.set('user_id', toString(prevData.user?.id));
+      formData.set('status', form.status);
+      // formData.set('qty', toString(prevData.qty));
+      // formData.set('total', toString(prevData.total));
+      // formData.set('trip_id', toString(prevData.trip?.id));
 
       // update transaction data here ...
-      const response = await API.put(`/transaction/${transId}`, formData, config);
+      const response = await API.patch(`/transaction/${id}`, formData, config);
       // console.log(response);
 
       document.querySelector('#paymentModal').classList.toggle('hidden');
-
-      history.push('/payment');
+      history.push('/profile');
     } catch (error) {
       console.log(error.message);
     }
   };
-  // console.log(form);
-  console.log(trans);
   useEffect(() => {
-    getData();
-  }, [state]);
+    getDataTrans();
+  }, [form, state]);
+  console.log(form);
+  // console.log(prevData);
 
   return (
     <div className="pt-36 bg-gray-100 ">
       <Navbar class="bg-navbar" />
       <main className="container mx-auto overflow-auto pb-36">
-        {/* {trans === [] || null ? (
-          <div>Loading...</div>
-        ) : ( */}
         <form onSubmit={handleOnSubmit} encType="multipart/form-data">
-          {trans.map((data, i) => {
-            return (
-              <Box key={i}>
-                <Invoice
-                  // data trip
-                  date={data.trip.dateTrip}
-                  title={data.trip.title}
-                  country={data.trip.country?.name}
-                  day={data.trip.day}
-                  night={data.trip.night}
-                  accomodation={data.trip.accomodation}
-                  transportation={data.trip.transportation}
-                  // transaction
-                  style={data.status === 'Approve' ? 'green' : data.status === 'Waiting Approve' ? 'yellow' : 'red'}
-                  status={data.status}
-                  disabled={''}
-                  attachment={data.id === transId ? preview : data.attachment}
-                  proofDesc={data.status === 'Approve' ? 'No. Ticket' : 'Upload proof of payment'}
-                  qty={data.qty}
-                  total={data.total}
-                  // user
-                  userName={data.user.fullname}
-                  userEmail={data.user.email}
-                  userPhone={data.user.phone}
-                  onChange={handleChange}
-                />
-                {/* {preview && <img className="w-40 h-40 object-cover object-center" src={preview} alt="preview" />} */}
-                <input hidden name="transId" onChange={handleChange} type="number" value={data.id} />
+          {trans == [] || null ? (
+            <div>Loading...</div>
+          ) : (
+            <>
+              {trans.map((data, i) => {
+                return (
+                  <Box key={i}>
+                    <Invoice
+                      // data trip
+                      date={data.trip.dateTrip}
+                      title={data.trip.title}
+                      country={data.trip.country?.name}
+                      day={data.trip.day}
+                      night={data.trip.night}
+                      accomodation={data.trip.accomodation}
+                      transportation={data.trip.transportation}
+                      // transaction
+                      style={data.status === 'Approve' ? 'green' : data.status === 'Waiting Approve' ? 'yellow' : 'red'}
+                      status={data.status}
+                      disabled={''}
+                      attachment={preview && data.id === id ? preview : data.attachment}
+                      proofDesc={data.status === 'Approve' ? 'No. Ticket' : 'Upload proof of payment'}
+                      qty={data.qty}
+                      total={data.total}
+                      // user
+                      userName={data.user.fullname}
+                      userEmail={data.user.email}
+                      userPhone={data.user.phone}
+                      onChange={handleChange}
+                    />
+                    <input hidden name="transId" onChange={handleChange} type="number" value={data.id} />
 
-                {/* conditional button */}
-                {data.status !== 'Waiting Payment' ? (
-                  <div className="hidden ml-auto my-6 pr-4 ">
-                    <button onClick={showModal} type="button" className=" bg-yellow-400 py-2 px-20 text-lg text-white font-bold rounded-md">
-                      Pay
-                    </button>
-                  </div>
-                ) : (
-                  <div className="ml-auto my-6 pr-4 ">
-                    <button id={data.id} onClick={showModal} type="button" className=" bg-yellow-400 hover:bg-yellow-500 transition duration-300 py-2 px-20 text-lg text-white font-bold rounded-md">
-                      Pay
-                    </button>
-                  </div>
-                )}
-              </Box>
-            );
-          })}
+                    {/* conditional button */}
+                    {data.status !== 'Waiting Payment' ? (
+                      <div className="hidden ml-auto my-6 pr-4 ">
+                        <button onClick={showModal} type="button" className=" bg-yellow-400 py-2 px-20 text-lg text-white font-bold rounded-md">
+                          Pay
+                        </button>
+                      </div>
+                    ) : (
+                      <div className="ml-auto my-6 pr-4 ">
+                        <button id={data.id} onClick={showModal} type="button" className=" bg-yellow-400 hover:bg-yellow-500 transition duration-300 py-2 px-20 text-lg text-white font-bold rounded-md">
+                          Pay
+                        </button>
+                      </div>
+                    )}
+                  </Box>
+                );
+              })}
 
-          {/* ModaL */}
-          <Modal id="paymentModal" w="max">
-            <div className="py-6 px-12 text-center">
-              <p>
-                Your payment will be confirmed within 1 x 24 hours <br /> To see orders click <input type="submit" value="Here" className="font-bold cursor-pointer" /> thank you!
-              </p>
-            </div>
-          </Modal>
+              {/* ModaL */}
+              <Modal id="paymentModal" w="max">
+                <div className="py-6 px-12 text-center">
+                  <p>
+                    Your payment will be confirmed within 1 x 24 hours <br /> To see orders click <input type="submit" value="Here" className="font-bold cursor-pointer" /> thank you!
+                  </p>
+                </div>
+              </Modal>
+            </>
+          )}
         </form>
-        {/* )} */}
       </main>
       <Footer />
     </div>

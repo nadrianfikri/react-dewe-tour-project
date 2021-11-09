@@ -22,11 +22,15 @@ function ListTransaction() {
       const response = await API.get('/transaction');
       const datas = response.data.data;
       const mappedData = datas.map((data) => {
+        data.updatedAt = new Date(data.updatedAt).toLocaleString('en-GB');
         data.trip.dateTrip = new Date(data.trip.dateTrip).toLocaleDateString('en-GB', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
         return data;
       });
+      const sortDataByUpdate = mappedData.sort(function (a, b) {
+        return new Date(b.updatedAt) - new Date(a.updatedAt);
+      });
 
-      setList(mappedData);
+      setList(sortDataByUpdate);
     } catch (error) {
       console.log(error);
     }
@@ -66,17 +70,17 @@ function ListTransaction() {
         <h1 className="text-4xl font-bold pb-10">Incoming Transaction</h1>
         <section className="flex flex-col overflow-auto bg-white">
           <Table>
-            <THeader col1="No" col2="Users" col3="Trip" col4="Bukti Transfer" col5="Status Payment" col6="Action" />
+            <THeader col1="No" col2="Users" col3="Trip" col4="Transfer Proof" col5="Updated At" col6="Status Payment" col7="Action" />
             <TBody>
               {list.map((data, index) => {
                 return (
                   <TData2
                     key={index}
-                    //
                     no={index + 1}
                     user={data.user?.fullname}
                     trip={data.trip?.title}
                     proofTF={data.attachment}
+                    updatedAt={data.updatedAt}
                     status={data.status}
                     statusStyle={`text-${data.status === 'Approve' ? 'green' : data.status === 'Waiting Approve' ? 'yellow' : 'red'}-400`}
                     onClick={handleOpen}

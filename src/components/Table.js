@@ -26,10 +26,11 @@ function TData2(props) {
       <td>{props.user}</td>
       <td>{props.trip}</td>
       <td>
-        <button type="button">
+        <a href={props.proofTF} target="_blank" rel="noreferrer">
           <img className="w-20" src={props.proofTF} alt="proof" />{' '}
-        </button>
+        </a>
       </td>
+      <td>{props.updatedAt}</td>
       <td className={`font-bold ${props.statusStyle} py-4`}>{props.status}</td>
       <td>
         <button onClick={props.onClick} type="button">
@@ -67,6 +68,7 @@ function THeader(props) {
         <th>{props.col4}</th>
         <th>{props.col5}</th>
         <th>{props.col6}</th>
+        <th>{props.col7}</th>
       </tr>
     </thead>
   );
