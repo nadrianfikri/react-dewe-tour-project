@@ -60,7 +60,7 @@ function App() {
   return (
     <>
       <ScrollToTop />
-      <Switch>
+      <>
         {loading === null ? (
           <div className="flex h-screen justify-center items-center ">
             <p className="animate-spin text-5xl">+</p>
@@ -87,7 +87,7 @@ function App() {
             )}
           </Switch>
         )}
-      </Switch>
+      </>
     </>
   );
 }

@@ -14,7 +14,12 @@ function ListTransaction() {
 
   // store data
   const [list, setList] = useState([]);
+  const [preview, setPreview] = useState(null);
   const [detailTrans, setDetailTrans] = useState([]);
+  const [form, setForm] = useState({
+    image: [],
+    status: '',
+  });
 
   // get data from database
   const getData = async () => {
@@ -39,20 +44,73 @@ function ListTransaction() {
     getData();
   }, []);
 
-  const handleCancel = () => {
-    // transaction.payment.status = 'Canceled';
-    // transaction.payment.style = 'red';
+  // UPDATE DATA TRANSACTION
+
+  // Create function for handle change data on form here ...
+  const handleChange = (e) => {
+    setForm({
+      ...form,
+      status: 'Approve',
+      [e.target.name]: e.target.type === 'file' ? e.target.files : e.target.value,
+    });
+
+    // Create image url for preview
+    if (e.target.type === 'file') {
+      let url = URL.createObjectURL(e.target.files[0]);
+      setPreview(url);
+    }
+  };
+
+  // if cancel
+  const handleCancel = async () => {
+    // init id from detailTrans
+    const id = detailTrans.id;
+    // default imageName cancel
+
+    // create config type content
+    const config = {
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    };
+
+    // Create store data with FormData as object
+    const formData = new FormData();
+    formData.set('attachment', form.image[0]);
+    formData.set('status', 'Canceled');
+
+    // update transaction data here ...
+    await API.patch(`/transaction/${id}`, formData, config);
 
     document.querySelector('#modalApprove').classList.toggle('hidden');
     history.push('/list-transaction');
+    getData();
   };
-  const handleApprove = () => {
-    // transaction.payment.status = 'Approve';
-    // transaction.payment.style = 'green';
+  // if approve
+  const handleApprove = async () => {
+    // init id from detailTrans
+    const id = detailTrans.id;
+    // create config type content
+    const config = {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    };
+
+    // Create store data with FormData as object
+    const formData = new FormData();
+    formData.set('attachment', form.image[0]);
+    formData.set('status', form.status);
+
+    // update transaction data here ...
+    await API.patch(`/transaction/${id}`, formData, config);
 
     document.querySelector('#modalApprove').classList.toggle('hidden');
     history.push('/list-transaction');
+    getData();
   };
+
+  // HANDLE MODALS
   const handleOpen = (e) => {
     const detailData = list.find((item) => item.id == e.target.id);
     setDetailTrans(detailData);
@@ -63,6 +121,8 @@ function ListTransaction() {
   const handleClose = () => {
     document.querySelector('#modalApprove').classList.toggle('hidden');
   };
+
+  // console.log(form);
   return (
     <div className="pt-36 bg-gray-100 ">
       <Navbar class="bg-navbar" />
@@ -109,6 +169,7 @@ function ListTransaction() {
               // transaction
               status={detailTrans.status}
               style={detailTrans.status === 'Approve' ? 'green' : detailTrans.status === 'Waiting Approve' ? 'yellow' : 'red'}
+              disabled={detailTrans.status === 'Waiting Approve' ? '' : 'disable'}
               attachment={detailTrans.attachment}
               proofDesc="TCK0101"
               qty={detailTrans.qty}
@@ -117,8 +178,10 @@ function ListTransaction() {
               userName={detailTrans.user?.fullname}
               userEmail={detailTrans.user?.email}
               userPhone={detailTrans.user?.phone}
+              onChange={handleChange}
             />
-            <section className="flex justify-end text-white gap-4 ">
+
+            <section className={`${detailTrans.status === 'Waiting Approve' ? 'flex' : 'hidden'}  justify-end text-white gap-4 `}>
               <button onClick={handleCancel} className="px-4 py-1 rounded-md bg-red-500 font-bold">
                 Cancel
               </button>

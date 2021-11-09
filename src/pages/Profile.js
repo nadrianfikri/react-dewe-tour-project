@@ -2,6 +2,8 @@ import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import Invoice from '../components/Invoice';
 import Box from '../components/Box';
+import { Modal, ModalTitle, ModalBody } from '../components/Modal';
+import { Form, FormGroup, InputSubmit, InputImage } from '../components/Form';
 
 import { useContext, useState, useEffect } from 'react';
 import { useHistory } from 'react-router';
@@ -10,12 +12,32 @@ import { API } from '../config/api';
 
 function Profile() {
   const history = useHistory();
-  const [state] = useContext(AuthContext);
+  const [state, dispatch] = useContext(AuthContext);
   const [trans, setTrans] = useState(null);
+  const [preview, setPreview] = useState(null); //For image preview
+  const [form, setForm] = useState({
+    images: '',
+    fullname: '',
+    email: '',
+    phone: '',
+    address: '',
+  }); //Store product data
+  const { fullname, email, phone, address } = form;
+  const id = state.user.id;
 
   // create func getData transaction
   const getData = async () => {
     try {
+      // setForm for update profile
+      setPreview(state?.user?.avatar);
+      setForm({
+        ...form,
+        fullname: state.user.fullname,
+        email: state.user.email,
+        phone: state.user.phone,
+        address: state.user.address,
+      });
+
       const response = await API.get('/transaction');
       const datas = response.data.data;
       const mappedData = datas.map((data) => {
@@ -39,6 +61,69 @@ function Profile() {
     getData();
   }, [state]);
 
+  // UPDATE PROFILE
+  const handleChange = (e) => {
+    setForm({
+      ...form,
+      [e.target.name]: e.target.type === 'file' ? e.target.files : e.target.value,
+    });
+
+    // Create image url for preview
+    if (e.target.type === 'file') {
+      let url = URL.createObjectURL(e.target.files[0]);
+      setPreview(url);
+    }
+  };
+
+  // Create function for handle submit data ...
+  const handleSubmit = async (e) => {
+    try {
+      e.preventDefault();
+
+      // Configuration
+      const config = {
+        headers: {
+          'Content-type': 'multipart/form-data',
+        },
+      };
+
+      // Store data with FormData as object
+      const formData = new FormData();
+      formData.set('avatar', form.images[0]);
+      formData.set('fullname', form.fullname);
+      formData.set('email', form.email);
+      formData.set('phone', form.phone);
+      formData.set('address', form.address);
+
+      // update user data
+      await API.patch(`users/${id}`, formData, config);
+
+      // check user updated
+      const response = await API.get('/check-auth');
+      if (response.status !== 200) {
+        dispatch({
+          type: 'AUTH_ERROR',
+        });
+      }
+
+      let payload = response.data.data.user;
+      payload.token = localStorage.token;
+      dispatch({
+        type: 'AUTH_SUCCESS',
+        payload,
+      });
+
+      document.querySelector('#userProfile').classList.toggle('hidden');
+      history.push('/profile');
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const showModal = () => {
+    document.querySelector('#userProfile').classList.toggle('hidden');
+  };
+
   return (
     <div className="pt-36 bg-gray-100 ">
       <Navbar class="bg-navbar" />
@@ -46,6 +131,62 @@ function Profile() {
         <div>Loading...</div>
       ) : (
         <main className="md:container mx-auto overflow-auto pb-36">
+          <Modal id="userProfile">
+            <div className="pt-72">
+              <ModalBody>
+                <ModalTitle title="Edit Profile" top="top-96" />
+                <Form action="/" method="post" submit={handleSubmit}>
+                  <FormGroup
+                    //
+                    id="fullname"
+                    labelFor="fullname"
+                    labelName="Fullname"
+                    typeInput="text"
+                    name="fullname"
+                    value={fullname}
+                    onChange={handleChange}
+                  />
+                  <FormGroup
+                    //
+                    id="email"
+                    labelFor="email"
+                    labelName="Email"
+                    typeInput="email"
+                    name="email"
+                    value={email}
+                    onChange={handleChange}
+                  />
+                  <FormGroup
+                    //
+                    id="phone"
+                    labelFor="phone"
+                    labelName="Phone"
+                    typeInput="text"
+                    name="phone"
+                    value={phone}
+                    onChange={handleChange}
+                  />
+                  <FormGroup
+                    //
+                    id="address"
+                    labelFor="address"
+                    labelName="Address"
+                    typeInput="text"
+                    name="address"
+                    value={address}
+                    onChange={handleChange}
+                  />
+                  {preview && (
+                    <div>
+                      <img className="w-40 h-40 object-cover object-center" src={preview} alt="profile" />
+                    </div>
+                  )}
+                  <InputImage onChange={handleChange} labelFor="images" labelName="Photo" />
+                  <InputSubmit value="Save" w="full" />
+                </Form>
+              </ModalBody>
+            </div>
+          </Modal>
           <section className="px-2 sm:container mx-auto md:w-max pb-10 ">
             <div className="flex flex-col-reverse md:flex-row gap-4 md:gap-24 bg-white p-6 rounded-md shadow">
               <div className="flex flex-col gap-2">
@@ -58,9 +199,11 @@ function Profile() {
                 <DataUser icon="/assets/icons/loc.svg" desc="Address" name={state?.user?.address} />
               </div>
 
-              <div className="flex flex-col gap-2">
-                <img src="/assets/images/photo.png" alt="img" className="rounded-md" />
-                <button className="bg-yellow-400 hover:bg-yellow-500 text-white text-lg font-bold py-2 rounded-md ">Change Photo Profile</button>
+              <div className="flex flex-col gap-2 justify-center items-center">
+                <img src={state?.user?.avatar} alt="img" className="rounded-md h-64 border-2 border-gray-300 p-2" />
+                <button onClick={showModal} className="bg-yellow-400 hover:bg-yellow-500 text-white text-lg font-bold py-2 rounded-md w-3/4 md:w-full">
+                  Edit Profile
+                </button>
               </div>
             </div>
           </section>
@@ -86,7 +229,7 @@ function Profile() {
                       status={data.status}
                       attachment={data.attachment}
                       disabled={'disabled'}
-                      proofDesc="TCK0101"
+                      proofDesc={data.status === 'Approve' ? 'TCK0101' : data.status === 'Waiting Approve' ? 'Proof of Payment' : 'Book Canceled'}
                       qty={data.qty}
                       total={data.total}
                       // user

@@ -18,8 +18,7 @@ function Payment() {
   const [preview, setPreview] = useState(null); //For image preview
 
   // Create Variabel for form data here ...
-  const [id, setId] = useState([null]);
-  // const [prevData, setPrevData] = useState([]);
+  const [id, setId] = useState(null);
   const [form, setForm] = useState({
     image: [],
     status: '',
@@ -63,16 +62,13 @@ function Payment() {
 
   // create function to show the modal
   const showModal = async (e) => {
-    if (form.image == []) {
+    if (form.status == '') {
       alert('Please upload your proof!!');
       return;
     }
 
     const id = Number(e.target.id);
     setId(id);
-
-    const detailData = await trans.find((item) => item.id == e.target.id);
-    // setPrevData(detailData);
 
     document.querySelector('#paymentModal').classList.toggle('hidden');
   };
@@ -93,13 +89,9 @@ function Payment() {
       const formData = new FormData();
       formData.set('attachment', form.image[0]);
       formData.set('status', form.status);
-      // formData.set('qty', toString(prevData.qty));
-      // formData.set('total', toString(prevData.total));
-      // formData.set('trip_id', toString(prevData.trip?.id));
 
       // update transaction data here ...
-      const response = await API.patch(`/transaction/${id}`, formData, config);
-      // console.log(response);
+      await API.patch(`/transaction/${id}`, formData, config);
 
       document.querySelector('#paymentModal').classList.toggle('hidden');
       history.push('/profile');
@@ -110,8 +102,6 @@ function Payment() {
   useEffect(() => {
     getDataTrans();
   }, [form, state]);
-  console.log(form);
-  // console.log(prevData);
 
   return (
     <div className="pt-36 bg-gray-100 ">

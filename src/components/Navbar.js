@@ -59,7 +59,7 @@ function Navbar(props) {
             {state.isLogin ? (
               <li className="relative pr-6 mt-2">
                 <button onClick={showDropdown}>
-                  <img className="w-50 h-50 object-cover rounded-full border-2 border-yellow-400" src="/assets/images/photo.png" alt="avatar" />
+                  <img className="w-50 h-50 object-cover rounded-full border-2 border-yellow-400" src={state?.user?.avatar} alt="avatar" />
                 </button>
                 <Dropdown click={handleLogout}>
                   {state.user.role === 'admin' ? (
