@@ -105,7 +105,6 @@ function Profile() {
           type: 'AUTH_ERROR',
         });
       }
-
       let payload = response.data.data.user;
       payload.token = localStorage.token;
       dispatch({
