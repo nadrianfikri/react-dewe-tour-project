@@ -14,7 +14,9 @@ import { API } from '../config/api';
 function Profile() {
   const history = useHistory();
   const [state, dispatch] = useContext(AuthContext);
-  const [trans, setTrans] = useState(null);
+  const [trans, setTrans] = useState([]);
+  const [filterData, setFilterData] = useState([]);
+
   const [preview, setPreview] = useState(null); //For image preview
   const [form, setForm] = useState({
     images: '',
@@ -60,6 +62,7 @@ function Profile() {
 
   useEffect(() => {
     getData();
+    setFilterData(trans);
   }, [state]);
 
   // UPDATE PROFILE
@@ -145,6 +148,14 @@ function Profile() {
     document.querySelector('#userProfile').classList.toggle('hidden');
   };
 
+  const filterDataByStatus = (e) => {
+    const status = e.target.id;
+
+    const data = trans.filter((item) => item.status === status);
+
+    setFilterData(data);
+  };
+
   return (
     <div className="pt-36 bg-gray-100 ">
       <Navbar class="bg-navbar" />
@@ -208,6 +219,7 @@ function Profile() {
               </ModalBody>
             </div>
           </Modal>
+          {/* User profiles */}
           <section className="px-2 sm:container mx-auto md:w-max pb-10 ">
             <div className="flex flex-col-reverse md:flex-row gap-4 md:gap-24 bg-white p-6 rounded-md shadow">
               <div className="flex flex-col gap-2">
@@ -228,14 +240,27 @@ function Profile() {
               </div>
             </div>
           </section>
-
           <section className="container mx-auto">
             <h1 className="text-2xl font-bold py-10">History Trip</h1>
 
+            <div className="bg-blue-100 flex my-10">
+              <button onClick={filterDataByStatus} id="Waiting Payment" className="bg-gray-50 py-2 px-4 w-full hover:bg-red-600 hover:text-white font-semibold border border-gray-200 text-gray-500 transition duration-300">
+                Waiting Payment
+              </button>
+              <button onClick={filterDataByStatus} id="Waiting Approve" className="bg-gray-50 py-2 px-4 w-full hover:bg-yellow-500 hover:text-white font-semibold border border-gray-200 text-gray-500 transition duration-300">
+                Waiting Approve
+              </button>
+              <button onClick={filterDataByStatus} id="Approve" className="bg-gray-50 py-2 px-4 w-full hover:bg-green-500 hover:text-white font-semibold border border-gray-200 text-gray-500 transition duration-300">
+                Approve
+              </button>
+              <button onClick={filterDataByStatus} id="Canceled" className="bg-gray-50 py-2 px-4 w-full hover:bg-red-600 hover:text-white font-semibold border border-gray-200 text-gray-500 transition duration-300">
+                Canceled
+              </button>
+            </div>
             <>
-              {trans !== null ? (
+              {filterData.length > 0 ? (
                 <>
-                  {trans.map((data, index) => {
+                  {filterData.map((data, index) => {
                     return (
                       <Box key={index}>
                         <Invoice
