@@ -11,11 +11,10 @@ import { API } from '../config/api';
 
 function ListTransaction() {
   const history = useHistory();
-
   // store data
   const [list, setList] = useState([]);
+  const [detailData, setDetailData] = useState([]);
   const [preview, setPreview] = useState(null);
-  const [detailTrans, setDetailTrans] = useState([]);
   const [form, setForm] = useState({
     image: [],
     status: '',
@@ -61,35 +60,8 @@ function ListTransaction() {
     }
   };
 
-  // if cancel
-  const handleCancel = async () => {
-    // init id from detailTrans
-    const id = detailTrans.id;
-    // default imageName cancel
-
-    // create config type content
-    const config = {
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    };
-
-    // Create store data with FormData as object
-    const formData = new FormData();
-    formData.set('attachment', form.image[0]);
-    formData.set('status', 'Canceled');
-
-    // update transaction data here ...
-    await API.patch(`/transaction/${id}`, formData, config);
-
-    document.querySelector('#modalApprove').classList.toggle('hidden');
-    history.push('/list-transaction');
-    getData();
-  };
-  // if approve
-  const handleApprove = async () => {
-    // init id from detailTrans
-    const id = detailTrans.id;
+  // create function for update transaction
+  const updateTransaction = async () => {
     // create config type content
     const config = {
       headers: {
@@ -102,18 +74,81 @@ function ListTransaction() {
     formData.set('attachment', form.image[0]);
     formData.set('status', form.status);
 
+    const id = detailData?.id;
+
     // update transaction data here ...
     await API.patch(`/transaction/${id}`, formData, config);
+  };
+  console.log(detailData.id);
 
-    document.querySelector('#modalApprove').classList.toggle('hidden');
-    history.push('/list-transaction');
-    getData();
+  // create function for update status without image
+  const updateStatusTrans = async () => {
+    // create config type content
+    const config = {
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    };
+
+    // Create store data new status trans
+    const status = {
+      status: 'Canceled',
+    };
+    // get trans id
+    const id = detailData?.id;
+
+    // update transaction data here ...
+    await API.patch(`/transaction/${id}`, status, config);
+  };
+
+  // create function for update quota trip
+  const updateQuota = async () => {
+    // create config type content
+    const config = {
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    };
+    // Create store data new quota filled as object
+    const quota = {
+      quotaFilled: detailData?.trip?.quotaFilled + 1,
+    };
+    // get trip id
+    const id = detailData?.trip?.id;
+    // update trip data here ...
+    await API.patch(`/trip/${id}`, quota, config);
+  };
+
+  // if cancel
+  const handleCancel = async () => {
+    try {
+      await updateStatusTrans();
+      await updateQuota();
+
+      getData();
+      document.querySelector('#modalApprove').classList.toggle('hidden');
+      history.push('/list-transaction');
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  // if approve
+  const handleApprove = async () => {
+    try {
+      await updateTransaction();
+
+      getData();
+      document.querySelector('#modalApprove').classList.toggle('hidden');
+      history.push('/list-transaction');
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   // HANDLE MODALS
   const handleOpen = (e) => {
     const detailData = list.find((item) => item.id == e.target.id);
-    setDetailTrans(detailData);
+    setDetailData(detailData);
 
     document.querySelector('#modalApprove').classList.toggle('hidden');
   };
@@ -159,29 +194,30 @@ function ListTransaction() {
             </button>
             <Invoice
               // data trip
-              date={detailTrans.trip?.dateTrip}
-              title={detailTrans.trip?.title}
-              country={detailTrans.trip?.country}
-              day={detailTrans.trip?.day}
-              night={detailTrans.trip?.night}
-              accomodation={detailTrans.trip?.accomodation}
-              transportation={detailTrans.trip?.transportation}
+              date={detailData.trip?.dateTrip}
+              title={detailData.trip?.title}
+              country={detailData.trip?.country}
+              day={detailData.trip?.day}
+              night={detailData.trip?.night}
+              accomodation={detailData.trip?.accomodation}
+              transportation={detailData.trip?.transportation}
               // transaction
-              status={detailTrans.status}
-              style={detailTrans.status === 'Approve' ? 'green' : detailTrans.status === 'Waiting Approve' ? 'yellow' : 'red'}
-              disabled={detailTrans.status === 'Waiting Approve' ? '' : 'disable'}
-              attachment={detailTrans.attachment}
-              proofDesc="TCK0101"
-              qty={detailTrans.qty}
-              total={detailTrans.total}
+              status={detailData.status}
+              style={detailData.status === 'Approve' ? 'green' : detailData.status === 'Waiting Approve' ? 'yellow' : 'red'}
+              disabled={detailData.status === 'Waiting Approve' ? '' : 'disable'}
+              attachment={preview && preview ? preview : detailData.attachment}
+              proofDesc={detailData.status === 'Approve' ? 'No. Ticket' : 'Upload proof of payment'}
+              qty={detailData.qty}
+              total={detailData.total}
               // user
-              userName={detailTrans.user?.fullname}
-              userEmail={detailTrans.user?.email}
-              userPhone={detailTrans.user?.phone}
+              userName={detailData.user?.fullname}
+              userEmail={detailData.user?.email}
+              userPhone={detailData.user?.phone}
               onChange={handleChange}
+              id="attachment"
             />
 
-            <section className={`${detailTrans.status === 'Waiting Approve' ? 'flex' : 'hidden'}  justify-end text-white gap-4 `}>
+            <section className={`${detailData.status === 'Waiting Approve' ? 'flex' : 'hidden'}  justify-end text-white gap-4 `}>
               <button onClick={handleCancel} className="px-4 py-1 rounded-md bg-red-500 font-bold">
                 Cancel
               </button>

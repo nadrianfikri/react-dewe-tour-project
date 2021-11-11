@@ -30,6 +30,7 @@ function AddTrip() {
     dateTrip: '',
     price: '',
     quota: '',
+    quotaFilled: '',
     description: '',
     images: [],
   });
@@ -92,6 +93,7 @@ function AddTrip() {
       formData.set('dateTrip', form.dateTrip);
       formData.set('price', form.price);
       formData.set('quota', form.quota);
+      formData.set('quotaFilled', form.quota);
       formData.set('description', form.description);
 
       // iterate file bcs formData decline fileList

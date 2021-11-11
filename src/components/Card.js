@@ -21,13 +21,15 @@ function Card2(props) {
   return (
     <div id="card" className="rounded-md bg-white p-2 m-5 w-350 h-350">
       <div className="card-img relative flex justify-center">
-        <img className="rounded-md" src={props.img} alt="img" />
+        <img className="rounded-md  h-60 object-center object-cover" src={props.img} alt="mainimage" />
         <p className="absolute top-3 rounded-bl-md rounded-tl-md right-0 px-3 py-1 bg-white text-sm">
           {props.quotaFill}/{props.quota}
         </p>
       </div>
-      <div className="card-title my-4 font-medium text-xl">
-        <Link to={`/detail-trip/${props.id}`}>{props.title}</Link>
+      <div className="card-title my-4 font-medium text-xl overflow-hidden overflow-ellipsis">
+        <Link to={`/detail-trip/${props.id}`} className="whitespace-nowrap ">
+          {props.title}
+        </Link>
       </div>
       <div className="card-body flex justify-between text-lg">
         <p className="text-yellow-400 font-black">
