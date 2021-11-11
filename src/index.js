@@ -7,11 +7,11 @@ import AuthContextProvider from './context/authContext';
 
 ReactDOM.render(
   <React.StrictMode>
-    <Router>
-      <AuthContextProvider>
+    <AuthContextProvider>
+      <Router>
         <App />
-      </AuthContextProvider>
-    </Router>
+      </Router>
+    </AuthContextProvider>
   </React.StrictMode>,
   document.getElementById('root')
 );

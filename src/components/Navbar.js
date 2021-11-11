@@ -33,14 +33,14 @@ function Navbar(props) {
     scrollFunction();
   };
   function scrollFunction() {
-    if (document.querySelector('#navbar').classList.contains('navbar')) {
+    if (document.querySelector('#navbar')?.classList?.contains('navbar')) {
       if (document.body.scrollTop > 80 || document.documentElement.scrollTop > 80) {
-        document.querySelector('#navbar').classList.add('bg-navbar');
+        document.querySelector('#navbar')?.classList?.add('bg-navbar');
       } else {
-        document.querySelector('#navbar').classList.remove('bg-navbar');
+        document.querySelector('#navbar')?.classList?.remove('bg-navbar');
       }
     } else {
-      document.querySelector('#navbar').classList.add('bg-navbar');
+      document.querySelector('#navbar')?.classList?.add('bg-navbar');
     }
   }
 
