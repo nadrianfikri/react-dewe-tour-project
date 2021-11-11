@@ -2,7 +2,6 @@ import { useContext, useEffect, useState } from 'react';
 import { Route, Switch, useHistory } from 'react-router-dom';
 import { AuthContext } from './context/authContext';
 
-import { PrivateRoute, ProtectedRoute } from './pages/PrivateRoute';
 import ScrollToTop from './components/ScrollToTop';
 import Home from './pages/Home';
 import DetailTrip from './pages/DetailTrip';
