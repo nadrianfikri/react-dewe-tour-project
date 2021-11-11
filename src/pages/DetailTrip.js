@@ -30,17 +30,6 @@ function DetailTrip() {
     }
   };
 
-  // setTimeout(() => {
-  //   const date = new Date(detailTrip?.dateTrip);
-  //   const formatedDate = date.toLocaleDateString('en-GB', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
-
-  //   //   setDetailTrip({
-  //   //     dateTrip: formatedDate,
-  //   //   });
-  // }, 1000);
-
-  // console.log(new Date(detailTrip.dateTrip).toLocaleDateString('en-GB', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }));
-
   const handleOnSubmit = async (e) => {
     try {
       e.preventDefault();
@@ -113,7 +102,7 @@ function DetailTrip() {
   }, []);
   return (
     <>
-      <div className="pt-36 bg-gray-100">
+      <div className="pt-36 bg-gray-100 ">
         <Navbar class="bg-navbar" />
 
         {detailTrip === null ? (
@@ -121,25 +110,26 @@ function DetailTrip() {
         ) : (
           <>
             <main className="px-auto lg:px-36">
-              <section className="mx-auto mb-10 w-auto lg:w-max px-2">
-                <div className=" px-4 pb-6 space-y-4">
+              <section className="mx-auto mb-10 w-auto px-2 ">
+                <div className=" px-4 pb-6 space-y-4 ">
                   <h1 className="text-4xl md:text-5xl font-bold">{detailTrip?.title}</h1>
                   <p className="text-2xl text-gray-400">{detailTrip?.country?.name}</p>
                 </div>
                 <div className="pb-2">
-                  <img className="rounded-lg" src={detailTrip?.images[0]} alt="img" />
+                  <img className=" rounded-lg h-96 w-full object-cover object-center" src={detailTrip?.images[0]} alt="img" />
                 </div>
 
-                <div className="flex overflow-auto justify-between gap-2">
-                  <div className="flex-none w-1/2 md:w-auto">
-                    <img src={detailTrip?.images[1]} alt="img" />
+                {/* images detail */}
+                <div className="flex overflow-auto justify-between  gap-2">
+                  <div className=" lg:flex-auto flex-none md:w-auto h-48 rounded-lg ">
+                    <img className=" lg:h-auto max-h-48 w-full object-center object-cover rounded-lg" src={detailTrip?.images[1]} alt="img" />
                   </div>
-                  <div className="flex-none w-1/2 md:w-auto">
-                    <img src={detailTrip?.images[2]} alt="img" />
+                  <div className="flex-none lg:flex-auto   md:w-auto">
+                    <img className=" lg:h-auto max-h-48 w-full object-center object-cover rounded-lg" src={detailTrip?.images[2]} alt="img" />
                   </div>
-                  <a href="/" className="flex-none w-1/2 md:w-auto relative ">
-                    <img src={detailTrip?.images[3]} alt="img" />
-                    <p className="absolute top-1/2 left-1/2 transform -translate-y-1/2 -translate-x-1/2 text-white text-2xl font-bold">+5</p>
+                  <a href="/" className="flex-none lg:flex-auto  md:w-auto relative ">
+                    <img className=" lg:h-auto max-h-48 w-full  object-center object-cover rounded-lg" src={detailTrip?.images[3]} alt="img" />
+                    <p className="absolute top-1/2 left-1/2 transform -translate-y-1/2 -translate-x-1/2 text-white text-2xl font-bold">+{detailTrip?.images.length}</p>
                   </a>
                 </div>
               </section>

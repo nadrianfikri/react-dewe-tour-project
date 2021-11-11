@@ -35,7 +35,7 @@ function Invoice(props) {
           <InfoTrip title="Transportation" desc={props.transportation} />
         </div>
         <div className="flex flex-col justify-between text-center gap-8">
-          <UploadProof onChange={props.onChange} image={props.attachment} desc={props.proofDesc} disabled={props.disabled} />
+          <UploadProof id={props.id} onChange={props.onChange} image={props.attachment} desc={props.proofDesc} disabled={props.disabled} />
         </div>
       </section>
       <section className="flex flex-col overflow-auto">
@@ -63,10 +63,10 @@ export function InfoTrip(props) {
 export function UploadProof(props) {
   return (
     <div>
-      <label className={`cursor-pointer${props.disabled}`} htmlFor={`attachment${props.disabled}`}>
+      <label className={`cursor-pointer${props.disabled}`} htmlFor={`${props.id}${props.disabled}`}>
         <img className="h-36 border-2 border-gray-600 rounded" src={props.image} alt="img" />
       </label>
-      <input onChange={props.onChange} type="file" id="attachment" name="image" hidden />
+      <input onChange={props.onChange} type="file" id={props.id} name="image" hidden />
       <dd className="text-sm mt-2 text-gray-400">{props.desc}</dd>
     </div>
   );

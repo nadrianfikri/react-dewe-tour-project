@@ -80,23 +80,44 @@ function Profile() {
     try {
       e.preventDefault();
 
-      // Configuration
-      const config = {
-        headers: {
-          'Content-type': 'multipart/form-data',
-        },
-      };
+      // conditional if update profile without new avatar
+      if (form.images === '') {
+        // Configuration
+        const config = {
+          headers: {
+            'Content-type': 'application/json',
+          },
+        };
+        // store data form
+        const form = {
+          fullname,
+          email,
+          phone,
+          address,
+        };
+        // update user data
+        await API.patch(`users/${id}`, form, config);
+      } else {
+        //  update profile with new avatar
 
-      // Store data with FormData as object
-      const formData = new FormData();
-      formData.set('avatar', form.images[0]);
-      formData.set('fullname', form.fullname);
-      formData.set('email', form.email);
-      formData.set('phone', form.phone);
-      formData.set('address', form.address);
+        // Configuration
+        const config = {
+          headers: {
+            'Content-type': 'multipart/form-data',
+          },
+        };
 
-      // update user data
-      await API.patch(`users/${id}`, formData, config);
+        // Store data with FormData as object
+        const formData = new FormData();
+        formData.set('avatar', form.images[0]);
+        formData.set('fullname', form.fullname);
+        formData.set('email', form.email);
+        formData.set('phone', form.phone);
+        formData.set('address', form.address);
+
+        // update user data
+        await API.patch(`users/${id}`, formData, config);
+      }
 
       // check user updated
       const response = await API.get('/check-auth');

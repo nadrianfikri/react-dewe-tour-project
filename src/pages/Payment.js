@@ -15,10 +15,12 @@ function Payment() {
   const history = useHistory();
   const [state] = useContext(AuthContext);
   const [trans, setTrans] = useState([]);
+  const [detailData, setDetailData] = useState({});
   const [preview, setPreview] = useState(null); //For image preview
+  const [message, setMessage] = useState(null);
 
   // Create Variabel for form data here ...
-  const [id, setId] = useState(null);
+  const [transId, setTransId] = useState(null);
   const [form, setForm] = useState({
     image: [],
     status: '',
@@ -58,19 +60,74 @@ function Payment() {
       let url = URL.createObjectURL(e.target.files[0]);
       setPreview(url);
     }
+    const id = Number(e.target.id);
+    const detailData = trans.filter((item) => item.id === id);
+
+    setDetailData(detailData);
   };
 
   // create function to show the modal
   const showModal = async (e) => {
     if (form.status == '') {
-      alert('Please upload your proof!!');
+      const alert = (
+        <Alert
+          variant="red"
+          message="Please Upload Your Proof of Payment"
+          onClick={() => {
+            setMessage(null);
+          }}
+        />
+      );
+      setMessage(alert);
+
+      setTimeout(() => {
+        setMessage(null);
+      }, 1500);
       return;
     }
 
-    const id = Number(e.target.id);
-    setId(id);
-
     document.querySelector('#paymentModal').classList.toggle('hidden');
+  };
+
+  // create function for update transaction
+  const updateTransaction = async () => {
+    // create config type content
+    const config = {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    };
+
+    // Create store data with FormData as object
+    const formData = new FormData();
+    formData.set('attachment', form.image[0]);
+    formData.set('status', form.status);
+
+    const id = detailData[0]?.id;
+
+    // update transaction data here ...
+    await API.patch(`/transaction/${id}`, formData, config);
+  };
+
+  // create function for update quota trip
+  const updateQuota = async () => {
+    // create config type content
+    const config = {
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    };
+
+    // Create store data new quota filled as object
+    const quota = {
+      quotaFilled: detailData[0]?.trip?.quotaFilled - 1,
+    };
+
+    // get trip id
+    const id = detailData[0]?.trip?.id;
+
+    // update transaction data here ...
+    await API.patch(`/trip/${id}`, quota, config);
   };
 
   // send data to database when submit
@@ -78,20 +135,9 @@ function Payment() {
     try {
       e.preventDefault();
 
-      // create config type content
-      const config = {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
-      };
-
-      // Create store data with FormData as object
-      const formData = new FormData();
-      formData.set('attachment', form.image[0]);
-      formData.set('status', form.status);
-
-      // update transaction data here ...
-      await API.patch(`/transaction/${id}`, formData, config);
+      // call function  send data to database
+      updateTransaction();
+      updateQuota();
 
       document.querySelector('#paymentModal').classList.toggle('hidden');
       history.push('/profile');
@@ -115,6 +161,7 @@ function Payment() {
               {trans.map((data, i) => {
                 return (
                   <Box key={i}>
+                    {message && message}
                     <Invoice
                       // data trip
                       date={data.trip.dateTrip}
@@ -128,7 +175,7 @@ function Payment() {
                       style={data.status === 'Approve' ? 'green' : data.status === 'Waiting Approve' ? 'yellow' : 'red'}
                       status={data.status}
                       disabled={''}
-                      attachment={preview && data.id === id ? preview : data.attachment}
+                      attachment={preview && data.id === detailData[0]?.id ? preview : data.attachment}
                       proofDesc={data.status === 'Approve' ? 'No. Ticket' : 'Upload proof of payment'}
                       qty={data.qty}
                       total={data.total}
@@ -137,9 +184,9 @@ function Payment() {
                       userEmail={data.user.email}
                       userPhone={data.user.phone}
                       onChange={handleChange}
+                      id={data.id}
                     />
                     <input hidden name="transId" onChange={handleChange} type="number" value={data.id} />
-
                     {/* conditional button */}
                     {data.status !== 'Waiting Payment' ? (
                       <div className="hidden ml-auto my-6 pr-4 ">
@@ -149,7 +196,7 @@ function Payment() {
                       </div>
                     ) : (
                       <div className="ml-auto my-6 pr-4 ">
-                        <button id={data.id} onClick={showModal} type="button" className=" bg-yellow-400 hover:bg-yellow-500 transition duration-300 py-2 px-20 text-lg text-white font-bold rounded-md">
+                        <button id={data.trip?.id} onClick={showModal} type="button" className=" bg-yellow-400 hover:bg-yellow-500 transition duration-300 py-2 px-20 text-lg text-white font-bold rounded-md">
                           Pay
                         </button>
                       </div>
