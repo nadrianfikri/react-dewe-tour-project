@@ -2,6 +2,7 @@ import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import Invoice from '../components/Invoice';
 import Box from '../components/Box';
+import NoData from '../components/NoData';
 import { Modal, ModalTitle, ModalBody } from '../components/Modal';
 import { Form, FormGroup, InputSubmit, InputImage } from '../components/Form';
 
@@ -232,34 +233,40 @@ function Profile() {
             <h1 className="text-2xl font-bold py-10">History Trip</h1>
 
             <>
-              {trans.map((data, index) => {
-                return (
-                  <Box key={index}>
-                    <Invoice
-                      // data trip
-                      date={data.trip.dateTrip}
-                      title={data.trip.title}
-                      country={data.trip.country?.name}
-                      day={data.trip.day}
-                      night={data.trip.night}
-                      accomodation={data.trip.accomodation}
-                      transportation={data.trip.transportation}
-                      // transaction
-                      style={data.status === 'Approve' ? 'green' : data.status === 'Waiting Approve' ? 'yellow' : 'red'}
-                      status={data.status}
-                      attachment={data.attachment}
-                      disabled={'disabled'}
-                      proofDesc={data.status === 'Approve' ? 'TCK0101' : data.status === 'Waiting Approve' ? 'Proof of Payment' : 'Book Canceled'}
-                      qty={data.qty}
-                      total={data.total}
-                      // user
-                      userName={data.user.fullname}
-                      userEmail={data.user.email}
-                      userPhone={data.user.phone}
-                    />
-                  </Box>
-                );
-              })}
+              {trans !== null ? (
+                <>
+                  {trans.map((data, index) => {
+                    return (
+                      <Box key={index}>
+                        <Invoice
+                          // data trip
+                          date={data.trip.dateTrip}
+                          title={data.trip.title}
+                          country={data.trip.country?.name}
+                          day={data.trip.day}
+                          night={data.trip.night}
+                          accomodation={data.trip.accomodation}
+                          transportation={data.trip.transportation}
+                          // transaction
+                          style={data.status === 'Approve' ? 'green' : data.status === 'Waiting Approve' ? 'yellow' : 'red'}
+                          status={data.status}
+                          attachment={data.attachment}
+                          disabled={'disabled'}
+                          proofDesc={data.status === 'Approve' ? 'TCK0101' : data.status === 'Waiting Approve' ? 'Proof of Payment' : 'Book Canceled'}
+                          qty={data.qty}
+                          total={data.total}
+                          // user
+                          userName={data.user.fullname}
+                          userEmail={data.user.email}
+                          userPhone={data.user.phone}
+                        />
+                      </Box>
+                    );
+                  })}
+                </>
+              ) : (
+                <NoData desc="There is no data" />
+              )}
             </>
           </section>
         </main>

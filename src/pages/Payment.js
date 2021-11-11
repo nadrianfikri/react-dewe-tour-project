@@ -3,7 +3,7 @@ import Footer from '../components/Footer';
 import Invoice from '../components/Invoice';
 import Box from '../components/Box';
 import Alert from '../components/Alert';
-
+import NoData from '../components/NoData';
 import { Modal } from '../components/Modal';
 
 import { useContext, useState, useEffect } from 'react';
@@ -20,7 +20,6 @@ function Payment() {
   const [message, setMessage] = useState(null);
 
   // Create Variabel for form data here ...
-  const [transId, setTransId] = useState(null);
   const [form, setForm] = useState({
     image: [],
     status: '',
@@ -158,52 +157,58 @@ function Payment() {
             <div>Loading...</div>
           ) : (
             <>
-              {trans.map((data, i) => {
-                return (
-                  <Box key={i}>
-                    {message && message}
-                    <Invoice
-                      // data trip
-                      date={data.trip.dateTrip}
-                      title={data.trip.title}
-                      country={data.trip.country?.name}
-                      day={data.trip.day}
-                      night={data.trip.night}
-                      accomodation={data.trip.accomodation}
-                      transportation={data.trip.transportation}
-                      // transaction
-                      style={data.status === 'Approve' ? 'green' : data.status === 'Waiting Approve' ? 'yellow' : 'red'}
-                      status={data.status}
-                      disabled={''}
-                      attachment={preview && data.id === detailData[0]?.id ? preview : data.attachment}
-                      proofDesc={data.status === 'Approve' ? 'No. Ticket' : 'Upload proof of payment'}
-                      qty={data.qty}
-                      total={data.total}
-                      // user
-                      userName={data.user.fullname}
-                      userEmail={data.user.email}
-                      userPhone={data.user.phone}
-                      onChange={handleChange}
-                      id={data.id}
-                    />
-                    <input hidden name="transId" onChange={handleChange} type="number" value={data.id} />
-                    {/* conditional button */}
-                    {data.status !== 'Waiting Payment' ? (
-                      <div className="hidden ml-auto my-6 pr-4 ">
-                        <button onClick={showModal} type="button" className=" bg-yellow-400 py-2 px-20 text-lg text-white font-bold rounded-md">
-                          Pay
-                        </button>
-                      </div>
-                    ) : (
-                      <div className="ml-auto my-6 pr-4 ">
-                        <button id={data.trip?.id} onClick={showModal} type="button" className=" bg-yellow-400 hover:bg-yellow-500 transition duration-300 py-2 px-20 text-lg text-white font-bold rounded-md">
-                          Pay
-                        </button>
-                      </div>
-                    )}
-                  </Box>
-                );
-              })}
+              {trans.length > 0 ? (
+                <>
+                  {trans.map((data, i) => {
+                    return (
+                      <Box key={i}>
+                        {message && message}
+                        <Invoice
+                          // data trip
+                          date={data.trip.dateTrip}
+                          title={data.trip.title}
+                          country={data.trip.country?.name}
+                          day={data.trip.day}
+                          night={data.trip.night}
+                          accomodation={data.trip.accomodation}
+                          transportation={data.trip.transportation}
+                          // transaction
+                          style={data.status === 'Approve' ? 'green' : data.status === 'Waiting Approve' ? 'yellow' : 'red'}
+                          status={data.status}
+                          disabled={''}
+                          attachment={preview && data.id === detailData[0]?.id ? preview : data.attachment}
+                          proofDesc={data.status === 'Approve' ? 'No. Ticket' : 'Upload proof of payment'}
+                          qty={data.qty}
+                          total={data.total}
+                          // user
+                          userName={data.user.fullname}
+                          userEmail={data.user.email}
+                          userPhone={data.user.phone}
+                          onChange={handleChange}
+                          id={data.id}
+                        />
+                        <input hidden name="transId" onChange={handleChange} type="number" value={data.id} />
+                        {/* conditional button */}
+                        {data.status !== 'Waiting Payment' ? (
+                          <div className="hidden ml-auto my-6 pr-4 ">
+                            <button onClick={showModal} type="button" className=" bg-yellow-400 py-2 px-20 text-lg text-white font-bold rounded-md">
+                              Pay
+                            </button>
+                          </div>
+                        ) : (
+                          <div className="ml-auto my-6 pr-4 ">
+                            <button id={data.trip?.id} onClick={showModal} type="button" className=" bg-yellow-400 hover:bg-yellow-500 transition duration-300 py-2 px-20 text-lg text-white font-bold rounded-md">
+                              Pay
+                            </button>
+                          </div>
+                        )}
+                      </Box>
+                    );
+                  })}
+                </>
+              ) : (
+                <NoData desc="There is no data" />
+              )}
 
               {/* ModaL */}
               <Modal id="paymentModal" w="max">

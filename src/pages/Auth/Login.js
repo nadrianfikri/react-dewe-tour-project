@@ -62,8 +62,6 @@ function Login() {
         setTimeout(() => {
           history.push('/income-trip');
         }, 1000);
-      } else {
-        history.push('/');
       }
 
       const alert = (
@@ -75,8 +73,8 @@ function Login() {
           }}
         />
       );
-      setMessage(alert);
 
+      setMessage(alert);
       setTimeout(() => {
         setMessage(null);
         document.querySelector('#modalLogin').classList.add('hidden');

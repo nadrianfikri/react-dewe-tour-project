@@ -82,7 +82,7 @@ function DetailTrip() {
 
   const increment = () => {
     // set new value to state
-    setCount(count === detailTrip.quota ? count : count + 1);
+    setCount(count === detailTrip.quotaFilled ? count : count + 1);
   };
 
   const decrement = () => {
@@ -177,7 +177,7 @@ function DetailTrip() {
                   {message && message}
                   <div className="form-group m-2 flex justify-end font-bold text-2xl">
                     {/* conditional btn */}
-                    {state.isLogin ? (
+                    {state.isLogin || detailTrip.quotaFilled > 0 ? (
                       <input type="submit" value="BOOK NOW" className=" mt-4 py-2 px-10 bg-yellow-400 text-right text-white font-bold text-lg rounded-md hover:bg-yellow-500 cursor-pointer " />
                     ) : (
                       <input disabled type="submit" value="BOOK NOW" className=" mt-4 py-2 px-10 opacity-50 bg-gray-400 text-right text-white font-bold text-lg rounded-md " />
