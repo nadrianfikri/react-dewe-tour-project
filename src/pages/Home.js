@@ -7,8 +7,10 @@ import NoData from '../components/NoData';
 import { Card2 } from '../components/Card';
 
 import { useState, useEffect } from 'react';
+import { useHistory } from 'react-router';
 import { API } from '../config/api';
 function Home() {
+  let history = useHistory();
   // init var for store data
   const [trips, setTrips] = useState([]);
   const [search, setSearch] = useState('');
@@ -30,6 +32,10 @@ function Home() {
   const handleChange = (e) => {
     setSearch(e.target.value.toLowerCase());
   };
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    window.scrollTo(0, 1100);
+  };
 
   // search fitur
   const filteredTrip = trips.filter((trip) => {
@@ -40,7 +46,7 @@ function Home() {
     <div className="bg-gray-100">
       <Navbar class="navbar" />
       <Hero>
-        <Search onChange={handleChange} />
+        <Search onSubmit={handleSubmit} onChange={handleChange} />
       </Hero>
       <Content>
         {filteredTrip.length > 0 ? (

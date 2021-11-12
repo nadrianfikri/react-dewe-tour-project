@@ -1,7 +1,7 @@
 function Search(props) {
   return (
     <div className="pt-10">
-      <form className="flex flex-col space-y-4" action="#">
+      <form onSubmit={props.onSubmit} className="flex flex-col space-y-4">
         <label className="text-lg" htmlFor="seacrhBar">
           Find great places to holiday
         </label>

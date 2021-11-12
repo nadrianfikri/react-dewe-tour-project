@@ -145,7 +145,7 @@ function Profile() {
   const filterDataByStatus = (e) => {
     const status = e.target.id;
 
-    const data = trans.filter((item) => item.status === status);
+    const data = trans.filter((item) => item.user.id === state.user.id && item.status === status);
 
     setFilterData(data);
   };
