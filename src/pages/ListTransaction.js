@@ -30,11 +30,8 @@ function ListTransaction() {
         data.trip.dateTrip = new Date(data.trip.dateTrip).toLocaleDateString('en-GB', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
         return data;
       });
-      const sortDataByUpdate = mappedData.sort(function (a, b) {
-        return new Date(b.updatedAt) - new Date(a.updatedAt);
-      });
 
-      setList(sortDataByUpdate);
+      setList(mappedData);
     } catch (error) {
       console.log(error);
     }
@@ -79,7 +76,6 @@ function ListTransaction() {
     // update transaction data here ...
     await API.patch(`/transaction/${id}`, formData, config);
   };
-  console.log(detailData.id);
 
   // create function for update status without image
   const updateStatusTrans = async () => {
@@ -111,12 +107,20 @@ function ListTransaction() {
     };
     // Create store data new quota filled as object
     const quota = {
-      quotaFilled: detailData?.trip?.quotaFilled + 1,
+      quotaFilled: detailData?.trip?.quotaFilled + detailData?.qty,
     };
     // get trip id
     const id = detailData?.trip?.id;
     // update trip data here ...
     await API.patch(`/trip/${id}`, quota, config);
+  };
+
+  const deleteTrans = async () => {
+    // get trans id
+    const id = detailData?.id;
+
+    // update transaction data here ...
+    await API.delete(`/transaction/${id}`);
   };
 
   // if cancel
@@ -143,6 +147,12 @@ function ListTransaction() {
     } catch (error) {
       console.log(error);
     }
+  };
+  const handleDelete = () => {
+    deleteTrans();
+    getData();
+    document.querySelector('#modalApprove').classList.toggle('hidden');
+    history.push('/list-transaction');
   };
 
   // HANDLE MODALS
@@ -223,6 +233,11 @@ function ListTransaction() {
               </button>
               <button onClick={handleApprove} className="px-4 py-1 rounded-md bg-green-500 font-bold">
                 Approve
+              </button>
+            </section>
+            <section className={`${detailData.status === 'Waiting Payment' ? 'flex' : 'hidden'}  justify-end text-white gap-4 `}>
+              <button onClick={handleDelete} className={`px-4 py-1 rounded-md bg-red-500 font-bold`}>
+                Delete
               </button>
             </section>
           </Box>

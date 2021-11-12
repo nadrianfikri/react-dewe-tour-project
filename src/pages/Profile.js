@@ -48,13 +48,7 @@ function Profile() {
         return data;
       });
 
-      const filteredData = mappedData
-        .filter((data) => data.user.id === state.user.id && data.status !== 'Waiting Payment')
-        .reverse()
-        .sort(function (a, b) {
-          return new Date(b.updatedAt) - new Date(a.updatedAt);
-        });
-      setTrans(filteredData);
+      setTrans(mappedData);
     } catch (error) {
       console.log(error);
     }

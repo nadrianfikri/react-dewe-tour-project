@@ -19,9 +19,9 @@ function Card2(props) {
     }).format(number);
   };
   return (
-    <div id="card" className="rounded-md bg-white p-2 m-5 w-350 h-350">
+    <div id="card" className={`${props.hidden}  rounded-md bg-white p-2 m-5 w-350 h-350`}>
       <div className="card-img relative flex justify-center">
-        <img className="rounded-md  h-60 object-center object-cover" src={props.img} alt="mainimage" />
+        <img className="rounded-md  h-60 w-1080 object-center object-cover" src={props.img} alt="mainimage" />
         <p className="absolute top-3 rounded-bl-md rounded-tl-md right-0 px-3 py-1 bg-white text-sm">
           {props.quotaFill}/{props.quota}
         </p>

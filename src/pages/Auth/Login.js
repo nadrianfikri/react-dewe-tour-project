@@ -56,13 +56,12 @@ function Login() {
           payload: response.data.data,
         });
       }
-
       // role user check
-      if (response.data.data.role === 'admin') {
-        setTimeout(() => {
+      setTimeout(() => {
+        if (response.data.data.role === 'admin') {
           history.push('/income-trip');
-        }, 1000);
-      }
+        }
+      }, 1000);
 
       const alert = (
         <Alert
@@ -103,7 +102,6 @@ function Login() {
       console.log(error);
     }
   };
-
   const handleLoginModal = () => {
     document.querySelector('#modalLogin').classList.toggle('hidden');
     document.querySelector('#modalRegist').classList.toggle('hidden');

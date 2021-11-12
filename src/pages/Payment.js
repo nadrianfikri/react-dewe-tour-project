@@ -36,7 +36,7 @@ function Payment() {
         return data;
       });
 
-      const filteredData = mappedData.filter((data) => data.user.id === state.user.id && data.status === 'Waiting Payment').reverse();
+      const filteredData = mappedData.filter((data) => data.user.id === state.user.id && data.status === 'Waiting Payment');
 
       setTrans(filteredData);
     } catch (error) {
@@ -119,7 +119,7 @@ function Payment() {
 
     // Create store data new quota filled as object
     const quota = {
-      quotaFilled: detailData[0]?.trip?.quotaFilled - 1,
+      quotaFilled: detailData[0]?.trip?.quotaFilled - detailData[0]?.qty,
     };
 
     // get trip id

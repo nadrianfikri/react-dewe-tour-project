@@ -21,7 +21,7 @@ function Invoice(props) {
       <section className="flex justify-between items-center overflow-auto">
         <div className="flex flex-col justify-between gap-8">
           <div className="text-2xl font-bold">
-            <h1>{props.title}</h1>
+            <h1 className="lg:w-96">{props.title}</h1>
             <p className="text-sm text-gray-400">{props.country}</p>
           </div>
           <div className={`bg-${props.style}-100 text-${props.style}-400 p-2 rounded-md w-max`}>{props.status}</div>
@@ -64,7 +64,7 @@ export function UploadProof(props) {
   return (
     <div>
       <label className={`cursor-pointer${props.disabled}`} htmlFor={`${props.id}${props.disabled}`}>
-        <img className="h-36 border-2 border-gray-600 rounded" src={props.image} alt="img" />
+        <img className="h-36 w-36 border-2 object-cover border-gray-600 rounded" src={props.image} alt="img" />
       </label>
       <input onChange={props.onChange} type="file" id={props.id} name="image" hidden />
       <dd className="text-sm mt-2 text-gray-400">{props.desc}</dd>

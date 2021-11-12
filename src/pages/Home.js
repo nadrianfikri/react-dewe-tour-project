@@ -56,6 +56,7 @@ function Home() {
                 quota={data?.quota}
                 price={data?.price}
                 country={data.country?.name}
+                hidden={data?.quotaFilled === 0 ? 'hidden' : 'block'}
               />
             ))}
           </>
