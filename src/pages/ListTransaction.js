@@ -2,9 +2,10 @@ import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import Box from '../components/Box';
 import Invoice from '../components/Invoice';
-import { Modal } from '../components/Modal';
+import { Modal, Overlay } from '../components/Modal';
 import { Table, THeader, TBody, TData2 } from '../components/Table';
 
+import { Transition } from '@headlessui/react';
 import { useState, useEffect } from 'react';
 import { useHistory } from 'react-router-dom';
 import { API } from '../config/api';
@@ -12,6 +13,7 @@ import { API } from '../config/api';
 function ListTransaction() {
   const history = useHistory();
   // store data
+  const [isOpen, setIsOpen] = useState(false);
   const [list, setList] = useState([]);
   const [detailData, setDetailData] = useState([]);
   const [preview, setPreview] = useState(null);
@@ -30,11 +32,8 @@ function ListTransaction() {
         data.trip.dateTrip = new Date(data.trip.dateTrip).toLocaleDateString('en-GB', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
         return data;
       });
-      const sortDataByUpdate = mappedData.sort(function (a, b) {
-        return new Date(b.updatedAt) - new Date(a.updatedAt);
-      });
 
-      setList(sortDataByUpdate);
+      setList(mappedData);
     } catch (error) {
       console.log(error);
     }
@@ -79,7 +78,6 @@ function ListTransaction() {
     // update transaction data here ...
     await API.patch(`/transaction/${id}`, formData, config);
   };
-  console.log(detailData.id);
 
   // create function for update status without image
   const updateStatusTrans = async () => {
@@ -111,12 +109,20 @@ function ListTransaction() {
     };
     // Create store data new quota filled as object
     const quota = {
-      quotaFilled: detailData?.trip?.quotaFilled + 1,
+      quotaFilled: detailData?.trip?.quotaFilled + detailData?.qty,
     };
     // get trip id
     const id = detailData?.trip?.id;
     // update trip data here ...
     await API.patch(`/trip/${id}`, quota, config);
+  };
+
+  const deleteTrans = async () => {
+    // get trans id
+    const id = detailData?.id;
+
+    // update transaction data here ...
+    await API.delete(`/transaction/${id}`);
   };
 
   // if cancel
@@ -126,7 +132,7 @@ function ListTransaction() {
       await updateQuota();
 
       getData();
-      document.querySelector('#modalApprove').classList.toggle('hidden');
+      setIsOpen(false);
       history.push('/list-transaction');
     } catch (error) {
       console.log(error);
@@ -138,11 +144,17 @@ function ListTransaction() {
       await updateTransaction();
 
       getData();
-      document.querySelector('#modalApprove').classList.toggle('hidden');
+      setIsOpen(false);
       history.push('/list-transaction');
     } catch (error) {
       console.log(error);
     }
+  };
+  const handleDelete = () => {
+    deleteTrans();
+    getData();
+    setIsOpen(false);
+    history.push('/list-transaction');
   };
 
   // HANDLE MODALS
@@ -150,14 +162,9 @@ function ListTransaction() {
     const detailData = list.find((item) => item.id == e.target.id);
     setDetailData(detailData);
 
-    document.querySelector('#modalApprove').classList.toggle('hidden');
+    setIsOpen(true);
   };
 
-  const handleClose = () => {
-    document.querySelector('#modalApprove').classList.toggle('hidden');
-  };
-
-  // console.log(form);
   return (
     <div className="pt-36 bg-gray-100 ">
       <Navbar class="bg-navbar" />
@@ -186,47 +193,68 @@ function ListTransaction() {
             </TBody>
           </Table>
         </section>
+        <Transition show={isOpen}>
+          <Overlay>
+            <Transition.Child
+              enter="transition ease-out duration-300"
+              enterFrom="transform opacity-0 scale-0"
+              enterTo="transform opacity-100 scale-100"
+              leave="transition ease-in duration-200"
+              leaveFrom="transform opacity-100 scale-100"
+              leaveTo="transform opacity-0 scale-0"
+            >
+              <Modal>
+                <Box>
+                  <button onClick={() => setIsOpen(false)} className="absolute top-0 right-0 text-5xl text-gray-400 close-modal z-50 transform rotate-45">
+                    +
+                  </button>
+                  <Invoice
+                    // data trip
+                    date={detailData.trip?.dateTrip}
+                    title={detailData.trip?.title}
+                    country={detailData.trip?.country}
+                    day={detailData.trip?.day}
+                    night={detailData.trip?.night}
+                    accomodation={detailData.trip?.accomodation}
+                    transportation={detailData.trip?.transportation}
+                    // transaction
+                    status={detailData.status}
+                    style={detailData.status === 'Approve' ? 'green' : detailData.status === 'Waiting Approve' ? 'yellow' : 'red'}
+                    disabled={detailData.status === 'Waiting Approve' ? '' : 'disable'}
+                    attachment={preview && preview ? preview : detailData.attachment}
+                    proofDesc={detailData.status === 'Approve' ? 'No. Ticket' : 'Upload proof of payment'}
+                    qty={detailData.qty}
+                    total={detailData.total}
+                    // user
+                    userName={detailData.user?.fullname}
+                    userEmail={detailData.user?.email}
+                    userPhone={detailData.user?.phone}
+                    onChange={handleChange}
+                    id="attachment"
+                  />
 
-        <Modal id="modalApprove" w="3/4">
-          <Box>
-            <button onClick={handleClose} className="absolute top-0 right-0 text-5xl text-gray-400 close-modal z-50 transform rotate-45">
-              +
-            </button>
-            <Invoice
-              // data trip
-              date={detailData.trip?.dateTrip}
-              title={detailData.trip?.title}
-              country={detailData.trip?.country}
-              day={detailData.trip?.day}
-              night={detailData.trip?.night}
-              accomodation={detailData.trip?.accomodation}
-              transportation={detailData.trip?.transportation}
-              // transaction
-              status={detailData.status}
-              style={detailData.status === 'Approve' ? 'green' : detailData.status === 'Waiting Approve' ? 'yellow' : 'red'}
-              disabled={detailData.status === 'Waiting Approve' ? '' : 'disable'}
-              attachment={preview && preview ? preview : detailData.attachment}
-              proofDesc={detailData.status === 'Approve' ? 'No. Ticket' : 'Upload proof of payment'}
-              qty={detailData.qty}
-              total={detailData.total}
-              // user
-              userName={detailData.user?.fullname}
-              userEmail={detailData.user?.email}
-              userPhone={detailData.user?.phone}
-              onChange={handleChange}
-              id="attachment"
-            />
+                  <section className={`${detailData.status === 'Waiting Approve' ? 'flex' : 'hidden'}  justify-end text-white gap-4 `}>
+                    <button onClick={handleCancel} className="px-4 py-1 rounded-md bg-red-500 font-bold">
+                      Cancel
+                    </button>
+                    <button onClick={handleApprove} className="px-4 py-1 rounded-md bg-green-500 font-bold">
+                      Approve
+                    </button>
+                  </section>
+                  <section className={`${detailData.status === 'Waiting Payment' ? 'flex' : 'hidden'}  justify-end text-white gap-4 `}>
+                    <button onClick={handleDelete} className={`px-4 py-1 rounded-md bg-red-500 font-bold`}>
+                      Delete
+                    </button>
+                  </section>
+                </Box>
+              </Modal>
+            </Transition.Child>
+          </Overlay>
+        </Transition>
 
-            <section className={`${detailData.status === 'Waiting Approve' ? 'flex' : 'hidden'}  justify-end text-white gap-4 `}>
-              <button onClick={handleCancel} className="px-4 py-1 rounded-md bg-red-500 font-bold">
-                Cancel
-              </button>
-              <button onClick={handleApprove} className="px-4 py-1 rounded-md bg-green-500 font-bold">
-                Approve
-              </button>
-            </section>
-          </Box>
-        </Modal>
+        {/* <Modal id="modalApprove" w="3/4">
+          
+        </Modal> */}
       </main>
       <Footer />
     </div>

@@ -46,7 +46,7 @@ function Select(props) {
 function Option(props) {
   return (
     <>
-      <option onChange={props.onChange} value={props.value}>
+      <option onChange={props.onChange} value={props.value} id={props.id}>
         {props.field}
       </option>
     </>

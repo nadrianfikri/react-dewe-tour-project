@@ -3,9 +3,10 @@ import Footer from '../components/Footer';
 import Invoice from '../components/Invoice';
 import Box from '../components/Box';
 import Alert from '../components/Alert';
+import NoData from '../components/NoData';
+import { Modal, Overlay } from '../components/Modal';
 
-import { Modal } from '../components/Modal';
-
+import { Transition } from '@headlessui/react';
 import { useContext, useState, useEffect } from 'react';
 import { useHistory } from 'react-router-dom';
 import { AuthContext } from '../context/authContext';
@@ -14,13 +15,13 @@ import { API } from '../config/api';
 function Payment() {
   const history = useHistory();
   const [state] = useContext(AuthContext);
+  const [isOpen, setIsOpen] = useState(false);
   const [trans, setTrans] = useState([]);
   const [detailData, setDetailData] = useState({});
   const [preview, setPreview] = useState(null); //For image preview
   const [message, setMessage] = useState(null);
 
   // Create Variabel for form data here ...
-  const [transId, setTransId] = useState(null);
   const [form, setForm] = useState({
     image: [],
     status: '',
@@ -37,7 +38,7 @@ function Payment() {
         return data;
       });
 
-      const filteredData = mappedData.filter((data) => data.user.id === state.user.id && data.status === 'Waiting Payment').reverse();
+      const filteredData = mappedData.filter((data) => data.user.id === state.user.id && data.status === 'Waiting Payment');
 
       setTrans(filteredData);
     } catch (error) {
@@ -85,8 +86,7 @@ function Payment() {
       }, 1500);
       return;
     }
-
-    document.querySelector('#paymentModal').classList.toggle('hidden');
+    setIsOpen(true);
   };
 
   // create function for update transaction
@@ -120,13 +120,13 @@ function Payment() {
 
     // Create store data new quota filled as object
     const quota = {
-      quotaFilled: detailData[0]?.trip?.quotaFilled - 1,
+      quotaFilled: detailData[0]?.trip?.quotaFilled - detailData[0]?.qty,
     };
 
     // get trip id
     const id = detailData[0]?.trip?.id;
 
-    // update transaction data here ...
+    // update trip data here ...
     await API.patch(`/trip/${id}`, quota, config);
   };
 
@@ -136,8 +136,8 @@ function Payment() {
       e.preventDefault();
 
       // call function  send data to database
-      updateTransaction();
-      updateQuota();
+      await updateTransaction();
+      await updateQuota();
 
       document.querySelector('#paymentModal').classList.toggle('hidden');
       history.push('/profile');
@@ -158,61 +158,80 @@ function Payment() {
             <div>Loading...</div>
           ) : (
             <>
-              {trans.map((data, i) => {
-                return (
-                  <Box key={i}>
-                    {message && message}
-                    <Invoice
-                      // data trip
-                      date={data.trip.dateTrip}
-                      title={data.trip.title}
-                      country={data.trip.country?.name}
-                      day={data.trip.day}
-                      night={data.trip.night}
-                      accomodation={data.trip.accomodation}
-                      transportation={data.trip.transportation}
-                      // transaction
-                      style={data.status === 'Approve' ? 'green' : data.status === 'Waiting Approve' ? 'yellow' : 'red'}
-                      status={data.status}
-                      disabled={''}
-                      attachment={preview && data.id === detailData[0]?.id ? preview : data.attachment}
-                      proofDesc={data.status === 'Approve' ? 'No. Ticket' : 'Upload proof of payment'}
-                      qty={data.qty}
-                      total={data.total}
-                      // user
-                      userName={data.user.fullname}
-                      userEmail={data.user.email}
-                      userPhone={data.user.phone}
-                      onChange={handleChange}
-                      id={data.id}
-                    />
-                    <input hidden name="transId" onChange={handleChange} type="number" value={data.id} />
-                    {/* conditional button */}
-                    {data.status !== 'Waiting Payment' ? (
-                      <div className="hidden ml-auto my-6 pr-4 ">
-                        <button onClick={showModal} type="button" className=" bg-yellow-400 py-2 px-20 text-lg text-white font-bold rounded-md">
-                          Pay
-                        </button>
-                      </div>
-                    ) : (
-                      <div className="ml-auto my-6 pr-4 ">
-                        <button id={data.trip?.id} onClick={showModal} type="button" className=" bg-yellow-400 hover:bg-yellow-500 transition duration-300 py-2 px-20 text-lg text-white font-bold rounded-md">
-                          Pay
-                        </button>
-                      </div>
-                    )}
-                  </Box>
-                );
-              })}
+              {trans.length > 0 ? (
+                <>
+                  {trans.map((data, i) => {
+                    return (
+                      <Box key={i}>
+                        {message && message}
+                        <Invoice
+                          // data trip
+                          date={data.trip.dateTrip}
+                          title={data.trip.title}
+                          country={data.trip.country?.name}
+                          day={data.trip.day}
+                          night={data.trip.night}
+                          accomodation={data.trip.accomodation}
+                          transportation={data.trip.transportation}
+                          // transaction
+                          style={data.status === 'Approve' ? 'green' : data.status === 'Waiting Approve' ? 'yellow' : 'red'}
+                          status={data.status}
+                          disabled={''}
+                          attachment={preview && data.id === detailData[0]?.id ? preview : data.attachment}
+                          proofDesc={data.status === 'Approve' ? 'No. Ticket' : 'Upload proof of payment'}
+                          qty={data.qty}
+                          total={data.total}
+                          // user
+                          userName={data.user.fullname}
+                          userEmail={data.user.email}
+                          userPhone={data.user.phone}
+                          onChange={handleChange}
+                          id={data.id}
+                        />
+                        <input hidden name="transId" onChange={handleChange} type="number" value={data.id} />
+                        {/* conditional button */}
+                        {data.status !== 'Waiting Payment' ? (
+                          <div className="hidden ml-auto my-6 pr-4 ">
+                            <button onClick={showModal} type="button" className=" bg-yellow-400 py-2 px-20 text-lg text-white font-bold rounded-md">
+                              Pay
+                            </button>
+                          </div>
+                        ) : (
+                          <div className="ml-auto my-6 pr-4 ">
+                            <button id={data.trip?.id} onClick={showModal} type="button" className=" bg-yellow-400 hover:bg-yellow-500 transition duration-300 py-2 px-20 text-lg text-white font-bold rounded-md">
+                              Pay
+                            </button>
+                          </div>
+                        )}
+                      </Box>
+                    );
+                  })}
+                </>
+              ) : (
+                <NoData desc="There is no data" />
+              )}
 
               {/* ModaL */}
-              <Modal id="paymentModal" w="max">
-                <div className="py-6 px-12 text-center">
-                  <p>
-                    Your payment will be confirmed within 1 x 24 hours <br /> To see orders click <input type="submit" value="Here" className="font-bold cursor-pointer" /> thank you!
-                  </p>
-                </div>
-              </Modal>
+              <Transition show={isOpen}>
+                <Overlay>
+                  <Transition.Child
+                    enter="transition ease-out duration-300"
+                    enterFrom="transform opacity-0 scale-0"
+                    enterTo="transform opacity-100 scale-100"
+                    leave="transition ease-in duration-200"
+                    leaveFrom="transform opacity-100 scale-100"
+                    leaveTo="transform opacity-0 scale-0"
+                  >
+                    <Modal>
+                      <div className="py-6 px-12 text-center">
+                        <p>
+                          Your payment will be confirmed within 1 x 24 hours <br /> To see orders click <input type="submit" value="Here" className="font-bold cursor-pointer" /> thank you!
+                        </p>
+                      </div>
+                    </Modal>
+                  </Transition.Child>
+                </Overlay>
+              </Transition>
             </>
           )}
         </form>

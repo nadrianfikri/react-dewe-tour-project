@@ -9,7 +9,7 @@ import { API, setAuthToken } from '../../config/api';
 import { useHistory } from 'react-router';
 import Alert from '../../components/Alert';
 
-function Login() {
+function Login(props) {
   let history = useHistory();
 
   const [state, dispatch] = useContext(AuthContext);
@@ -56,15 +56,12 @@ function Login() {
           payload: response.data.data,
         });
       }
-
       // role user check
-      if (response.data.data.role === 'admin') {
-        setTimeout(() => {
+      setTimeout(() => {
+        if (response.data.data.role === 'admin') {
           history.push('/income-trip');
-        }, 1000);
-      } else {
-        history.push('/');
-      }
+        }
+      }, 1000);
 
       const alert = (
         <Alert
@@ -76,16 +73,11 @@ function Login() {
         />
       );
       setMessage(alert);
-
-      setTimeout(() => {
-        setMessage(null);
-        document.querySelector('#modalLogin').classList.add('hidden');
-      }, 1500);
-
       setForm({
         email: '',
         password: '',
       });
+      history.push('/');
     } catch (error) {
       const alert = (
         <Alert
@@ -106,47 +98,40 @@ function Login() {
     }
   };
 
-  const handleLoginModal = () => {
-    document.querySelector('#modalLogin').classList.toggle('hidden');
-    document.querySelector('#modalRegist').classList.toggle('hidden');
-  };
   return (
     <>
-      <Modal id="modalLogin">
-        <ModalTitle title="Login" />
+      <ModalBody>
         {message && message}
-        <ModalBody>
-          <Form action="/" method="post" submit={handleOnSubmit}>
-            <FormGroup
-              //
-              id="email"
-              labelFor="email"
-              labelName="Email"
-              typeInput="email"
-              name="email"
-              value={email}
-              onChange={handleChange}
-            />
-            <FormGroup
-              //
-              id="password"
-              labelFor="password"
-              labelName="Password"
-              typeInput="password"
-              name="password"
-              value={password}
-              onChange={handleChange}
-            />
-            <InputSubmit value="Login" w="full" />
-            <DirectText
-              //
-              click={handleLoginModal}
-              desc="Don't have an account? Klik "
-              textLink="Here"
-            />
-          </Form>
-        </ModalBody>
-      </Modal>
+        <Form action="/" method="post" submit={handleOnSubmit}>
+          <FormGroup
+            //
+            id="email"
+            labelFor="email"
+            labelName="Email"
+            typeInput="email"
+            name="email"
+            value={email}
+            onChange={handleChange}
+          />
+          <FormGroup
+            //
+            id="password"
+            labelFor="password"
+            labelName="Password"
+            typeInput="password"
+            name="password"
+            value={password}
+            onChange={handleChange}
+          />
+          <InputSubmit value="Login" w="full" />
+          <DirectText
+            //
+            click={props.onClick}
+            desc="Don't have an account? Klik "
+            textLink="Here"
+          />
+        </Form>
+      </ModalBody>
     </>
   );
 }
