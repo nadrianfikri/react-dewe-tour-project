@@ -9,7 +9,7 @@ import { AuthContext } from '../../context/authContext';
 // get API config
 import { API } from '../../config/api';
 
-function Regist() {
+function Regist(props) {
   const history = useHistory();
 
   const [state, dispatch] = useContext(AuthContext);
@@ -47,7 +47,6 @@ function Regist() {
 
       // insert data user to database
       const response = await API.post('/register', body, config);
-      // console.log(response);
 
       // notif
       if (response.data.status === 'Success') {
@@ -65,7 +64,6 @@ function Regist() {
       }
       setTimeout(() => {
         setMessage(null);
-        document.querySelector('#modalRegist').classList.toggle('hidden');
         history.push('/');
       }, 1500);
     } catch (error) {
@@ -78,59 +76,51 @@ function Regist() {
     }
   };
 
-  const handleRegistModal = () => {
-    document.querySelector('#modalRegist').classList.toggle('hidden');
-    document.querySelector('#modalLogin').classList.toggle('hidden');
-  };
-
   return (
     <>
-      <Modal id="modalRegist">
-        <ModalTitle title="Register" />
+      <ModalBody>
         {message && message}
-        <ModalBody>
-          <Form submit={handleOnSubmit}>
-            <FormGroup
-              //
-              onChange={handleOnChange}
-              labelFor="name"
-              labelName="Full Name"
-              typeInput="text"
-              name="fullname"
-              value={fullname}
-            />
-            <FormGroup
-              //
-              onChange={handleOnChange}
-              labelFor="email"
-              labelName="Email"
-              typeInput="email"
-              name="email"
-              value={email}
-            />
-            <FormGroup
-              //
-              onChange={handleOnChange}
-              labelFor="password"
-              labelName="Password"
-              typeInput="password"
-              name="password"
-              value={password}
-            />
-            <FormGroup
-              //
-              onChange={handleOnChange}
-              labelFor="phone"
-              labelName="Phone"
-              typeInput="text"
-              name="phone"
-              value={phone}
-            />
-            <InputSubmit value="Register" w="full" />
-            <DirectText click={handleRegistModal} desc="Already have an account? " textLink="Login" />
-          </Form>
-        </ModalBody>
-      </Modal>
+        <Form submit={handleOnSubmit}>
+          <FormGroup
+            //
+            onChange={handleOnChange}
+            labelFor="name"
+            labelName="Full Name"
+            typeInput="text"
+            name="fullname"
+            value={fullname}
+          />
+          <FormGroup
+            //
+            onChange={handleOnChange}
+            labelFor="email"
+            labelName="Email"
+            typeInput="email"
+            name="email"
+            value={email}
+          />
+          <FormGroup
+            //
+            onChange={handleOnChange}
+            labelFor="password"
+            labelName="Password"
+            typeInput="password"
+            name="password"
+            value={password}
+          />
+          <FormGroup
+            //
+            onChange={handleOnChange}
+            labelFor="phone"
+            labelName="Phone"
+            typeInput="text"
+            name="phone"
+            value={phone}
+          />
+          <InputSubmit value="Register" w="full" />
+          <DirectText click={props.onClick} desc="Already have an account? " textLink="Login" />
+        </Form>
+      </ModalBody>
     </>
   );
 }

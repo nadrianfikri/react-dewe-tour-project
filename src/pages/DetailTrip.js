@@ -203,7 +203,7 @@ function ArticleBody(props) {
   return (
     <div className="flex-none">
       <p className="text-xs text-gray-400">{props.title}</p>
-      <div className="flex gap-3 space-y-2 text-lg font-bold">
+      <div className="flex gap-3 space-y-2 font-bold">
         <img src={props.icon} alt="img" />
         <h2 className="pb-2">{props.detail}</h2>
       </div>

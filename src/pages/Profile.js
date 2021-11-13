@@ -3,9 +3,9 @@ import Footer from '../components/Footer';
 import Invoice from '../components/Invoice';
 import Box from '../components/Box';
 import NoData from '../components/NoData';
-import { Modal, ModalTitle, ModalBody } from '../components/Modal';
-import { Form, FormGroup, InputSubmit, InputImage } from '../components/Form';
+import { Modal, ModalTitle, Overlay } from '../components/Modal';
 
+import { Transition } from '@headlessui/react';
 import { useContext, useState, useEffect } from 'react';
 import { useHistory } from 'react-router';
 import { AuthContext } from '../context/authContext';
@@ -14,6 +14,8 @@ import { API } from '../config/api';
 function Profile() {
   const history = useHistory();
   const [state, dispatch] = useContext(AuthContext);
+  const [isOpen, setIsOpen] = useState(false);
+
   const [trans, setTrans] = useState([]);
   const [filterData, setFilterData] = useState([]);
 
@@ -131,15 +133,11 @@ function Profile() {
         payload,
       });
 
-      document.querySelector('#userProfile').classList.toggle('hidden');
+      setIsOpen(false);
       history.push('/profile');
     } catch (error) {
       console.log(error);
     }
-  };
-
-  const showModal = () => {
-    document.querySelector('#userProfile').classList.toggle('hidden');
   };
 
   const filterDataByStatus = (e) => {
@@ -157,62 +155,56 @@ function Profile() {
         <div>Loading...</div>
       ) : (
         <main className="md:container mx-auto overflow-auto pb-36">
-          <Modal id="userProfile">
-            <div className="pt-72">
-              <ModalBody>
-                <ModalTitle title="Edit Profile" top="top-96" />
-                <Form action="/" method="post" submit={handleSubmit}>
-                  <FormGroup
-                    //
-                    id="fullname"
-                    labelFor="fullname"
-                    labelName="Fullname"
-                    typeInput="text"
-                    name="fullname"
-                    value={fullname}
-                    onChange={handleChange}
-                  />
-                  <FormGroup
-                    //
-                    id="email"
-                    labelFor="email"
-                    labelName="Email"
-                    typeInput="email"
-                    name="email"
-                    value={email}
-                    onChange={handleChange}
-                  />
-                  <FormGroup
-                    //
-                    id="phone"
-                    labelFor="phone"
-                    labelName="Phone"
-                    typeInput="text"
-                    name="phone"
-                    value={phone}
-                    onChange={handleChange}
-                  />
-                  <FormGroup
-                    //
-                    id="address"
-                    labelFor="address"
-                    labelName="Address"
-                    typeInput="text"
-                    name="address"
-                    value={address}
-                    onChange={handleChange}
-                  />
-                  {preview && (
-                    <div>
-                      <img className="w-40 h-40 object-cover object-center" src={preview} alt="profile" />
+          <Transition show={isOpen}>
+            <Overlay>
+              <Transition.Child
+                enter="transition ease-out duration-300"
+                enterFrom="transform opacity-0 scale-0"
+                enterTo="transform opacity-100 scale-100"
+                leave="transition ease-in duration-200"
+                leaveFrom="transform opacity-100 scale-100"
+                leaveTo="transform opacity-0 scale-0"
+              >
+                <Modal>
+                  <ModalTitle title="Edit Profile" onClick={() => setIsOpen(false)} />
+                  <section className="px-2 sm:container mx-auto md:w-max pb-10 ">
+                    <div className="flex flex-col-reverse md:flex-row gap-4 md:gap-24 bg-white p-6 rounded-md shadow">
+                      <div className="flex flex-col gap-2 text-gray-500">
+                        <DataUser icon="/assets/icons/name.svg" desc="Full Name">
+                          <input type="text" className="border border-gray-300 rounded-lg focus:outline-none px-2" name="fullname" value={fullname} onChange={handleChange} />
+                        </DataUser>
+                        <DataUser icon="/assets/icons/email.svg" desc="Email">
+                          <input type="text" className="border border-gray-300 rounded-lg focus:outline-none px-2" name="email" value={email} onChange={handleChange} />
+                        </DataUser>
+                        <DataUser icon="/assets/icons/phone.svg" desc="Mobile Phone">
+                          <input type="text" className="border border-gray-300 rounded-lg focus:outline-none px-2" name="phone" value={phone} onChange={handleChange} />
+                        </DataUser>
+                        <DataUser icon="/assets/icons/loc.svg" desc="Address">
+                          <input type="text" className="border border-gray-300 rounded-lg focus:outline-none px-2" name="address" value={address} onChange={handleChange} />
+                        </DataUser>
+                      </div>
+
+                      <div className="flex flex-col gap-2 justify-center items-center">
+                        {preview && (
+                          <div>
+                            <img className="rounded-lg w-40 h-40 object-cover object-center" src={preview} alt="profile" />
+                          </div>
+                        )}
+                        <label className="bg-yellow-200 text-center text-yellow-700 rounded-lg px-2 w-full cursor-pointer" htmlFor="files">
+                          Change Photo
+                        </label>
+                        <input type="file" name="images" id="files" onChange={handleChange} hidden />
+                      </div>
                     </div>
-                  )}
-                  <InputImage onChange={handleChange} labelFor="images" labelName="Photo" />
-                  <InputSubmit value="Save" w="full" />
-                </Form>
-              </ModalBody>
-            </div>
-          </Modal>
+                    <button onClick={handleSubmit} className="flex-none bg-yellow-400 hover:bg-yellow-500 text-white text-lg font-bold py-2 rounded-md w-full">
+                      Save
+                    </button>
+                  </section>
+                </Modal>
+              </Transition.Child>
+            </Overlay>
+          </Transition>
+
           {/* User profiles */}
           <section className="px-2 sm:container mx-auto md:w-max pb-10 ">
             <div className="flex flex-col-reverse md:flex-row gap-4 md:gap-24 bg-white p-6 rounded-md shadow">
@@ -228,7 +220,7 @@ function Profile() {
 
               <div className="flex flex-col gap-2 justify-center items-center">
                 <img src={state?.user?.avatar} alt="img" className="rounded-md h-64 border-2 border-gray-300 p-2" />
-                <button onClick={showModal} className="bg-yellow-400 hover:bg-yellow-500 text-white text-lg font-bold py-2 rounded-md w-3/4 md:w-full">
+                <button onClick={() => setIsOpen(true)} className="bg-yellow-400 hover:bg-yellow-500 text-white text-lg font-bold py-2 rounded-md w-3/4 md:w-full">
                   Edit Profile
                 </button>
               </div>
@@ -302,6 +294,7 @@ const DataUser = (props) => {
         <img src={props.icon} alt="img" className="absolute right-1/2 bottom-1/2 transform translate-y-1/2 translate-x-1/2" />
       </div>
       <article className=" space-y-1">
+        {props.children}
         <dd className="text-sm font-bold">{props.name}</dd>
         <dd className="text-xs text-gray-400">{props.desc}</dd>
       </article>

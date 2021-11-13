@@ -42,7 +42,7 @@ function IncomeTrip() {
               id={data?.id}
               title={data?.title}
               img={data?.images[0]}
-              quotaFill="10"
+              quotaFill={data?.quotaFilled}
               quota={data?.quota}
               price={data?.price}
               country={data.country?.name}

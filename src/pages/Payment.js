@@ -4,8 +4,9 @@ import Invoice from '../components/Invoice';
 import Box from '../components/Box';
 import Alert from '../components/Alert';
 import NoData from '../components/NoData';
-import { Modal } from '../components/Modal';
+import { Modal, Overlay } from '../components/Modal';
 
+import { Transition } from '@headlessui/react';
 import { useContext, useState, useEffect } from 'react';
 import { useHistory } from 'react-router-dom';
 import { AuthContext } from '../context/authContext';
@@ -14,6 +15,7 @@ import { API } from '../config/api';
 function Payment() {
   const history = useHistory();
   const [state] = useContext(AuthContext);
+  const [isOpen, setIsOpen] = useState(false);
   const [trans, setTrans] = useState([]);
   const [detailData, setDetailData] = useState({});
   const [preview, setPreview] = useState(null); //For image preview
@@ -84,8 +86,7 @@ function Payment() {
       }, 1500);
       return;
     }
-
-    document.querySelector('#paymentModal').classList.toggle('hidden');
+    setIsOpen(true);
   };
 
   // create function for update transaction
@@ -125,7 +126,7 @@ function Payment() {
     // get trip id
     const id = detailData[0]?.trip?.id;
 
-    // update transaction data here ...
+    // update trip data here ...
     await API.patch(`/trip/${id}`, quota, config);
   };
 
@@ -135,8 +136,8 @@ function Payment() {
       e.preventDefault();
 
       // call function  send data to database
-      updateTransaction();
-      updateQuota();
+      await updateTransaction();
+      await updateQuota();
 
       document.querySelector('#paymentModal').classList.toggle('hidden');
       history.push('/profile');
@@ -211,13 +212,26 @@ function Payment() {
               )}
 
               {/* ModaL */}
-              <Modal id="paymentModal" w="max">
-                <div className="py-6 px-12 text-center">
-                  <p>
-                    Your payment will be confirmed within 1 x 24 hours <br /> To see orders click <input type="submit" value="Here" className="font-bold cursor-pointer" /> thank you!
-                  </p>
-                </div>
-              </Modal>
+              <Transition show={isOpen}>
+                <Overlay>
+                  <Transition.Child
+                    enter="transition ease-out duration-300"
+                    enterFrom="transform opacity-0 scale-0"
+                    enterTo="transform opacity-100 scale-100"
+                    leave="transition ease-in duration-200"
+                    leaveFrom="transform opacity-100 scale-100"
+                    leaveTo="transform opacity-0 scale-0"
+                  >
+                    <Modal>
+                      <div className="py-6 px-12 text-center">
+                        <p>
+                          Your payment will be confirmed within 1 x 24 hours <br /> To see orders click <input type="submit" value="Here" className="font-bold cursor-pointer" /> thank you!
+                        </p>
+                      </div>
+                    </Modal>
+                  </Transition.Child>
+                </Overlay>
+              </Transition>
             </>
           )}
         </form>
