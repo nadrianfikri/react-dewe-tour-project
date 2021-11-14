@@ -14,6 +14,8 @@ import Notfound from './components/Notfound';
 
 // get API config and setAuthToken
 import { API, setAuthToken } from './config/api';
+import SkeletonHome from './components/SkeletonHome';
+import Navbar from './components/Navbar';
 
 //init token on axios every time the app is refreshed
 if (localStorage.token) {
@@ -55,7 +57,9 @@ function App() {
   // Call function check user with useEffect
   useEffect(() => {
     checkUser();
-    setLoading(true);
+    setTimeout(() => {
+      setLoading(true);
+    }, 1000);
   }, []);
 
   return (
@@ -63,10 +67,14 @@ function App() {
       <ScrollToTop />
       <>
         {loading === null ? (
-          <div className="flex h-screen justify-center items-center ">
-            <p className="animate-spin text-5xl">+</p>
-          </div>
+          <>
+            <Navbar class="bg-navbar" />
+            <SkeletonHome />
+          </>
         ) : (
+          // <div className="flex h-screen justify-center items-center ">
+          //   <p className="animate-spin text-5xl">+</p>
+          // </div>
           <>
             {state.isLogin === false ? (
               <Switch>

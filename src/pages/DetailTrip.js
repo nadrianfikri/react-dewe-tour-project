@@ -1,6 +1,10 @@
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import Alert from '../components/Alert';
+import SkeletonHome from '../components/SkeletonHome';
+import { Overlay } from '../components/Modal';
+
+import { Transition } from '@headlessui/react';
 import { useState, useEffect, useContext } from 'react';
 import { useParams, useHistory } from 'react-router-dom';
 
@@ -13,6 +17,7 @@ function DetailTrip() {
   const [state] = useContext(AuthContext);
 
   // store data
+  const [isOpen, setIsOpen] = useState(false);
   const [message, setMessage] = useState(null);
   const [count, setCount] = useState(1);
   const [detailTrip, setDetailTrip] = useState(null);
@@ -106,7 +111,7 @@ function DetailTrip() {
         <Navbar class="bg-navbar" />
 
         {detailTrip === null ? (
-          <div>loading</div>
+          <SkeletonHome />
         ) : (
           <>
             <main className="px-auto lg:px-36">
@@ -115,7 +120,7 @@ function DetailTrip() {
                   <h1 className="text-4xl md:text-5xl font-bold">{detailTrip?.title}</h1>
                   <p className="text-2xl text-gray-400">{detailTrip?.country?.name}</p>
                 </div>
-                <div className="pb-2">
+                <div className="pb-2 ">
                   <img className=" rounded-lg h-96 w-full object-cover object-center" src={detailTrip?.images[0]} alt="img" />
                 </div>
 
@@ -127,10 +132,12 @@ function DetailTrip() {
                   <div className="flex-none lg:flex-auto   md:w-auto">
                     <img className=" lg:h-auto max-h-48 w-full object-center object-cover rounded-lg" src={detailTrip?.images[2]} alt="img" />
                   </div>
-                  <a href="/" className="flex-none lg:flex-auto  md:w-auto relative ">
+                  <button onClick={() => setIsOpen(true)} type="button" className="flex-none md:flex-auto sm:w-auto relative ">
+                    <span className="absolute top-0 right-0 w-full h-full bg-gray-800 opacity-30 z-10"></span>
+
                     <img className=" lg:h-auto max-h-48 w-full  object-center object-cover rounded-lg" src={detailTrip?.images[3]} alt="img" />
-                    <p className="absolute top-1/2 left-1/2 transform -translate-y-1/2 -translate-x-1/2 text-white text-2xl font-bold">+{detailTrip?.images.length}</p>
-                  </a>
+                    <p className="absolute top-1/2 left-1/2 transform -translate-y-1/2 -translate-x-1/2 text-white text-2xl font-bold">More +</p>
+                  </button>
                 </div>
               </section>
 
@@ -190,9 +197,34 @@ function DetailTrip() {
           </>
         )}
       </div>
+      {/* Modal image */}
+      <Transition show={isOpen}>
+        <Overlay>
+          <Transition.Child
+            enter="transition ease-out duration-300"
+            enterFrom="transform opacity-0 scale-0"
+            enterTo="transform opacity-100 scale-100"
+            leave="transition ease-in duration-200"
+            leaveFrom="transform opacity-100 scale-100"
+            leaveTo="transform opacity-0 scale-0"
+          >
+            <div className=" relative  p-10 md:w-1080 w-auto flex gap-4 justify-center items-center overflow-auto">
+              <button onClick={() => setIsOpen(false)} type="button" className="absolute top-0 right-3 w-7 h-7 text-white text-4xl rounded-full hover:text-red-500 transform rotate-45 flex justify-center items-center">
+                +
+              </button>
+              <div className="flex gap-6 overflow-auto">
+                {detailTrip?.images.map((data, index) => (
+                  <img key={index} className="max-h-96 md:max-w-xl object-cover" src={data} alt="detail" />
+                ))}
+              </div>
+            </div>
+          </Transition.Child>
+        </Overlay>
+      </Transition>
     </>
   );
 }
+
 function Article({ children }) {
   return <article className="flex flex-col gap-3 p-4 overflow-auto">{children}</article>;
 }
