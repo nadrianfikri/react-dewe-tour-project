@@ -128,7 +128,7 @@ function Navbar(props) {
                       <div className="rounded-lg">
                         <Menu.Item>
                           <Link to="/list-transaction" className="py-2 px-4 flex gap-2 hover:bg-gray-300 transition-all duration-300">
-                            <img className="w-8 h-8 object-cover rounded-full" src={item?.user?.avatar} alt="avatar" />
+                            <img className="w-8 h-8 object-cover object-center rounded-full" src={item?.user?.avatar} alt="avatar" />
                             <div className="overflow-hidden">
                               <h1 className="font-bold line-clamp-1">{item.status} Transaction Please Process</h1>
                               <p className="text-xs text-green-600">{item.updatedAt}</p>

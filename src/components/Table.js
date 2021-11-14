@@ -21,16 +21,16 @@ function TFoot(props) {
 }
 function TData2(props) {
   return (
-    <tr className="border-b border-grey-600 overflow-hidden">
+    <tr className="border-b border-grey-600  overflow-hidden">
       <td className="px-2">{props.no}</td>
       <td>{props.user}</td>
-      <td className="md:w-64 line-clamp-2">{props.trip}</td>
+      <td className="md:w-64 ">{props.trip}</td>
       <td>
         <a href={props.proofTF} target="_blank" rel="noreferrer">
           <img className="w-20" src={props.proofTF} alt="proof" />{' '}
         </a>
       </td>
-      <td className="md:block hidden">{props.updatedAt}</td>
+      <td className="">{props.updatedAt}</td>
       <td className={`font-bold ${props.statusStyle} py-4`}>{props.status}</td>
       <td>
         <button onClick={props.onClick} type="button">
@@ -66,7 +66,7 @@ function THeader(props) {
         <th>{props.col2}</th>
         <th>{props.col3}</th>
         <th>{props.col4}</th>
-        <th className="hidden md:block">{props.col5}</th>
+        <th className="">{props.col5}</th>
         <th>{props.col6}</th>
         <th>{props.col7}</th>
       </tr>
