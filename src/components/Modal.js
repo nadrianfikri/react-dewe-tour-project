@@ -27,7 +27,7 @@ function ModalBody({ children }) {
 }
 
 function Modal(props) {
-  return <div className={`relative  overflow-auto bg-white rounded-lg shadow-xl p-8 m-4 ${props.width}`}>{props.children}</div>;
+  return <div className={`relative overflow-auto bg-white rounded-lg shadow-xl p-8 m-4 ${props.width}`}>{props.children}</div>;
 }
 function Overlay(props) {
   return (

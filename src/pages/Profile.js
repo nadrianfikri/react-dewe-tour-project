@@ -44,6 +44,7 @@ function Profile() {
       });
 
       const response = await API.get('/transaction');
+
       const datas = response.data.data;
       const mappedData = datas.map((data) => {
         data.trip.dateTrip = new Date(data.trip.dateTrip).toLocaleDateString('en-GB', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });

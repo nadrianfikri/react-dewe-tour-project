@@ -139,7 +139,7 @@ function Payment() {
       await updateTransaction();
       await updateQuota();
 
-      document.querySelector('#paymentModal').classList.toggle('hidden');
+      setIsOpen(false);
       history.push('/profile');
     } catch (error) {
       console.log(error.message);
