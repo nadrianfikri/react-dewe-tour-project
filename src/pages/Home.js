@@ -10,6 +10,9 @@ import { useState, useEffect } from 'react';
 import { useHistory } from 'react-router';
 import { API } from '../config/api';
 function Home() {
+  const title = 'Home';
+  document.title = 'Dewe Tour | ' + title;
+
   let history = useHistory();
   // init var for store data
   const [trips, setTrips] = useState([]);

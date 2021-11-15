@@ -27,11 +27,11 @@ function ModalBody({ children }) {
 }
 
 function Modal(props) {
-  return <div className={`relative  overflow-auto bg-white rounded-lg shadow-xl p-8 m-4 ${props.width}`}>{props.children}</div>;
+  return <div className={`relative overflow-auto bg-white rounded-lg shadow-xl p-8 m-4 ${props.width}`}>{props.children}</div>;
 }
 function Overlay(props) {
   return (
-    <div id="modal" className={`modal overflow-auto h-screen w-full fixed left-0 top-0 flex justify-center items-center bg-black bg-opacity-50 z-50 ${props.margin}`}>
+    <div id="modal" className={`modal overflow-auto h-auto md:h-screen w-auto md:w-full fixed left-0 top-0 flex justify-center items-center bg-black bg-opacity-50 z-50 ${props.margin}`}>
       {props.children}
     </div>
   );

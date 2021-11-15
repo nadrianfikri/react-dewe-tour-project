@@ -13,6 +13,9 @@ import { AuthContext } from '../context/authContext';
 import { API } from '../config/api';
 
 function Payment() {
+  const title = 'Payment';
+  document.title = 'Dewe Tour | ' + title;
+
   const history = useHistory();
   const [state] = useContext(AuthContext);
   const [isOpen, setIsOpen] = useState(false);
@@ -139,7 +142,7 @@ function Payment() {
       await updateTransaction();
       await updateQuota();
 
-      document.querySelector('#paymentModal').classList.toggle('hidden');
+      setIsOpen(false);
       history.push('/profile');
     } catch (error) {
       console.log(error.message);
@@ -160,10 +163,10 @@ function Payment() {
             <>
               {trans.length > 0 ? (
                 <>
+                  {message && message}
                   {trans.map((data, i) => {
                     return (
                       <Box key={i}>
-                        {message && message}
                         <Invoice
                           // data trip
                           date={data.trip.dateTrip}

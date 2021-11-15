@@ -1,5 +1,7 @@
-import { Modal, ModalTitle, ModalBody } from '../../components/Modal';
+import { ModalBody } from '../../components/Modal';
 import { Form, FormGroup, InputSubmit, DirectText } from '../../components/Form';
+import { EyeIcon, EyeOffIcon } from '@heroicons/react/outline';
+
 import Alert from '../../components/Alert';
 
 import { useState, useContext } from 'react';
@@ -13,6 +15,7 @@ function Regist(props) {
   const history = useHistory();
 
   const [state, dispatch] = useContext(AuthContext);
+  const [showText, setShowText] = useState(false);
   const [message, setMessage] = useState(null);
 
   const [form, setForm] = useState({
@@ -101,13 +104,18 @@ function Regist(props) {
           />
           <FormGroup
             //
-            onChange={handleOnChange}
+            id="password"
             labelFor="password"
             labelName="Password"
-            typeInput="password"
+            typeInput={showText ? 'text' : 'password'}
             name="password"
             value={password}
-          />
+            onChange={handleOnChange}
+          >
+            <button type="button" onClick={() => setShowText(!showText)} className="absolute top-2 right-2 w-7 text-gray-500 z-50">
+              {showText ? <EyeOffIcon /> : <EyeIcon />}
+            </button>
+          </FormGroup>
           <FormGroup
             //
             onChange={handleOnChange}

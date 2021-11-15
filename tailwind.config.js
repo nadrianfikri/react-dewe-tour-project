@@ -16,6 +16,7 @@ module.exports = {
       width: {
         350: '350px',
         50: '50px',
+        800: '800px',
         1080: '1080px',
       },
       height: {
@@ -27,5 +28,5 @@ module.exports = {
   variants: {
     extend: {},
   },
-  plugins: [],
+  plugins: [require('@tailwindcss/line-clamp')],
 };

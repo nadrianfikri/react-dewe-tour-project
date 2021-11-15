@@ -11,7 +11,10 @@ function FormGroup(props) {
       <label htmlFor={props.labelFor} className="font-bold text-lg">
         {props.labelName}
       </label>
-      <input onChange={props.onChange} type={props.typeInput} id={props.id} name={props.name} value={props.value} className="focus:outline-none focus:shadow-md p-2 bg-gray-200 rounded-md border-2 border-gray-300" required />
+      <div className="relative">
+        <input onChange={props.onChange} type={props.typeInput} id={props.id} name={props.name} value={props.value} className="focus:outline-none focus:shadow-md p-2 bg-gray-200 rounded-md border-2 border-gray-300 w-full" required />
+        {props.children}
+      </div>
     </div>
   );
 }

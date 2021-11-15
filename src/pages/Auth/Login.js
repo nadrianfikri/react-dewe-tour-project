@@ -1,5 +1,6 @@
-import { Modal, ModalTitle, ModalBody } from '../../components/Modal';
+import { ModalBody } from '../../components/Modal';
 import { Form, FormGroup, InputSubmit, DirectText } from '../../components/Form';
+import { EyeIcon, EyeOffIcon } from '@heroicons/react/outline';
 
 import { useContext, useState } from 'react';
 import { AuthContext } from '../../context/authContext';
@@ -15,6 +16,7 @@ function Login(props) {
   const [state, dispatch] = useContext(AuthContext);
 
   const [message, setMessage] = useState(null);
+  const [showText, setShowText] = useState(false);
 
   // store data with useState
   const [form, setForm] = useState({
@@ -82,7 +84,7 @@ function Login(props) {
       const alert = (
         <Alert
           variant="red"
-          message="Login Failed"
+          message="Email or Password is Wrong"
           onClick={() => {
             setMessage(null);
           }}
@@ -118,11 +120,15 @@ function Login(props) {
             id="password"
             labelFor="password"
             labelName="Password"
-            typeInput="password"
+            typeInput={showText ? 'text' : 'password'}
             name="password"
             value={password}
             onChange={handleChange}
-          />
+          >
+            <button type="button" onClick={() => setShowText(!showText)} className="absolute top-2 right-2 w-7 text-gray-500 z-50">
+              {showText ? <EyeOffIcon /> : <EyeIcon />}
+            </button>
+          </FormGroup>
           <InputSubmit value="Login" w="full" />
           <DirectText
             //

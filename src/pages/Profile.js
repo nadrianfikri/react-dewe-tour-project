@@ -12,6 +12,9 @@ import { AuthContext } from '../context/authContext';
 import { API } from '../config/api';
 
 function Profile() {
+  const title = 'Profile';
+  document.title = 'Dewe Tour | ' + title;
+
   const history = useHistory();
   const [state, dispatch] = useContext(AuthContext);
   const [isOpen, setIsOpen] = useState(false);
@@ -44,6 +47,7 @@ function Profile() {
       });
 
       const response = await API.get('/transaction');
+
       const datas = response.data.data;
       const mappedData = datas.map((data) => {
         data.trip.dateTrip = new Date(data.trip.dateTrip).toLocaleDateString('en-GB', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
@@ -147,6 +151,7 @@ function Profile() {
 
     setFilterData(data);
   };
+  console.log(filterData);
 
   return (
     <div className="pt-36 bg-gray-100 ">
@@ -220,7 +225,7 @@ function Profile() {
 
               <div className="flex flex-col gap-2 justify-center items-center">
                 <img src={state?.user?.avatar} alt="img" className="rounded-md h-64 border-2 border-gray-300 p-2" />
-                <button onClick={() => setIsOpen(true)} className="bg-yellow-400 hover:bg-yellow-500 text-white text-lg font-bold py-2 rounded-md w-3/4 md:w-full">
+                <button onClick={() => setIsOpen(true)} className="bg-yellow-400 hover:bg-yellow-500 text-white text-lg font-bold py-2 rounded-md w-full">
                   Edit Profile
                 </button>
               </div>
