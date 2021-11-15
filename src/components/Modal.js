@@ -31,7 +31,7 @@ function Modal(props) {
 }
 function Overlay(props) {
   return (
-    <div id="modal" className={`modal overflow-auto h-screen w-full fixed left-0 top-0 flex justify-center items-center bg-black bg-opacity-50 z-50 ${props.margin}`}>
+    <div id="modal" className={`modal overflow-auto h-auto md:h-screen w-auto md:w-full fixed left-0 top-0 flex justify-center items-center bg-black bg-opacity-50 z-50 ${props.margin}`}>
       {props.children}
     </div>
   );

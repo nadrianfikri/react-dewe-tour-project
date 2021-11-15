@@ -12,6 +12,9 @@ import { AuthContext } from '../context/authContext';
 import { API } from '../config/api';
 
 function DetailTrip() {
+  const title = 'Detail';
+  document.title = 'Dewe Tour | ' + title;
+
   let history = useHistory();
   const { id } = useParams();
   const [state] = useContext(AuthContext);
@@ -105,6 +108,7 @@ function DetailTrip() {
   useEffect(() => {
     getDetail();
   }, []);
+
   return (
     <>
       <div className="pt-36 bg-gray-100 ">
@@ -136,7 +140,7 @@ function DetailTrip() {
                     <span className="absolute top-0 right-0 w-full h-full bg-gray-800 opacity-30 z-10"></span>
 
                     <img className=" lg:h-auto max-h-48 w-full  object-center object-cover rounded-lg" src={detailTrip?.images[3]} alt="img" />
-                    <p className="absolute top-1/2 left-1/2 transform -translate-y-1/2 -translate-x-1/2 text-white text-2xl font-bold">More +</p>
+                    <p className="absolute top-1/2 left-1/2 transform -translate-y-1/2 -translate-x-1/2 text-white text-2xl font-bold z-20">More +</p>
                   </button>
                 </div>
               </section>

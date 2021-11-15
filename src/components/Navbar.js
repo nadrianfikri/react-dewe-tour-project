@@ -1,7 +1,7 @@
 //try tailwindUI
 import { Menu, Transition } from '@headlessui/react';
 import { Fragment, useContext, useEffect, useState } from 'react';
-import { BellIcon } from '@heroicons/react/outline';
+import { BellIcon, ChatIcon } from '@heroicons/react/outline';
 
 import logo from '../assets/images/logo-dewe.png';
 import { Link, useHistory } from 'react-router-dom';
@@ -85,64 +85,107 @@ function Navbar(props) {
             </Link>
           </li>
           <div className="flex justify-center items-center space-x-4 px-4 ">
-            {state.user.role === 'admin' ? (
-              // {/* menu dropdown */}
-              // {/* dropdown notification */}
-              <Menu as="div" className="relative inline-block text-left ">
-                <Menu.Button className="relative p-1 rounded-full text-white hover:text-yellow-200 ">
-                  <Transition
-                    //
-                    as={Fragment}
-                    enter="transition duration-400"
-                    enterFrom="transform opacity-0 -translate-y-10"
-                    enterTo="transform opacity-100 translate-y-0"
-                    leaveFrom="transform opacity-100 "
-                    leaveTo="transform opacity-0 "
-                  >
-                    <Menu.Items>
-                      <span className={`absolute top-10 right-1 bg-white w-8 h-8 transform rotate-45`}></span>
-                    </Menu.Items>
-                  </Transition>
+            {state.isLogin ? (
+              <>
+                {state.user.role === 'admin' ? (
+                  // {/* menu dropdown */}
+                  // {/* dropdown notification */}
+                  <Menu as="div" className="relative inline-block text-left ">
+                    <Menu.Button className="relative p-1 rounded-full text-white hover:text-yellow-200 ">
+                      <Transition
+                        //
+                        as={Fragment}
+                        enter="transition duration-400"
+                        enterFrom="transform opacity-0 -translate-y-10"
+                        enterTo="transform opacity-100 translate-y-0"
+                        leaveFrom="transform opacity-100 "
+                        leaveTo="transform opacity-0 "
+                      >
+                        <Menu.Items>
+                          <span className={`absolute top-10 right-1 bg-white w-8 h-8 transform rotate-45`}></span>
+                        </Menu.Items>
+                      </Transition>
 
-                  {notification.length > 0 ? (
-                    <>
-                      <span className="absolute top-0 right-1 rounded-full w-2 h-2 bg-yellow-400 animate-ping"></span>
-                      <span className="absolute top-0 right-1 rounded-full w-2 h-2 bg-yellow-400"></span>
-                      <BellIcon className="h-7 w-7" aria-hidden="true" />
-                    </>
-                  ) : (
-                    <BellIcon className="h-7 w-7" aria-hidden="true" />
-                  )}
-                </Menu.Button>
-                <Transition
-                  as={Fragment}
-                  enter="transition ease-out duration-200"
-                  enterFrom="transform opacity-0 -translate-y-10"
-                  enterTo="transform opacity-100 translate-y-0"
-                  leave="transition ease-in duration-200"
-                  leaveFrom="transform opacity-100 translate-y-0"
-                  leaveTo="transform opacity-0 -translate-y-10"
-                >
-                  <Menu.Items className="absolute overflow-auto -right-1 mt-2 w-64 max-h-72 origin-top-right bg-white divide-y  rounded-md shadow-lg text-gray-700 ">
-                    {trans?.map((item) => (
-                      <div className="rounded-lg">
-                        <Menu.Item>
-                          <Link to="/list-transaction" className="py-2 px-4 flex gap-2 hover:bg-gray-300 transition-all duration-300">
-                            <img className="w-8 h-8 object-cover object-center rounded-full" src={item?.user?.avatar} alt="avatar" />
-                            <div className="overflow-hidden">
-                              <h1 className="font-bold line-clamp-1">{item.status} Transaction Please Process</h1>
-                              <p className="text-xs text-green-600">{item.updatedAt}</p>
-                              <p className="text-xs text-gray-400 line-clamp-2 ">
-                                {item?.user?.fullname} - at trip {item.trip.title}
-                              </p>
-                            </div>
-                          </Link>
-                        </Menu.Item>
-                      </div>
-                    ))}
-                  </Menu.Items>
-                </Transition>
-              </Menu>
+                      {notification.length > 0 ? (
+                        <>
+                          <span className="absolute top-0 right-1 rounded-full w-2 h-2 bg-yellow-400 animate-ping"></span>
+                          <span className="absolute top-0 right-1 rounded-full w-2 h-2 bg-yellow-400"></span>
+                          <BellIcon className="h-7 w-7" aria-hidden="true" />
+                        </>
+                      ) : (
+                        <BellIcon className="h-7 w-7" aria-hidden="true" />
+                      )}
+                    </Menu.Button>
+                    <Transition
+                      as={Fragment}
+                      enter="transition ease-out duration-200"
+                      enterFrom="transform opacity-0 -translate-y-10"
+                      enterTo="transform opacity-100 translate-y-0"
+                      leave="transition ease-in duration-200"
+                      leaveFrom="transform opacity-100 translate-y-0"
+                      leaveTo="transform opacity-0 -translate-y-10"
+                    >
+                      <Menu.Items className="absolute overflow-auto -right-1 mt-2 w-64 max-h-72 origin-top-right bg-white divide-y  rounded-md shadow-lg text-gray-700 ">
+                        {trans?.map((item) => (
+                          <div className="rounded-lg">
+                            <Menu.Item>
+                              <Link to="/list-transaction" className="py-2 px-4 flex gap-2 hover:bg-gray-300 transition-all duration-300">
+                                <img className="w-8 h-8 object-cover object-center rounded-full" src={item?.user?.avatar} alt="avatar" />
+                                <div className="overflow-hidden">
+                                  <h1 className="font-bold line-clamp-1">{item.status} Transaction Please Process</h1>
+                                  <p className="text-xs text-green-600">{item.updatedAt}</p>
+                                  <p className="text-xs text-gray-400 line-clamp-2 ">
+                                    {item?.user?.fullname} - at trip {item.trip.title}
+                                  </p>
+                                </div>
+                              </Link>
+                            </Menu.Item>
+                          </div>
+                        ))}
+                      </Menu.Items>
+                    </Transition>
+                  </Menu>
+                ) : (
+                  // chat dropdown
+                  <Menu as="div" className="relative inline-block pt-1 text-left ">
+                    <Menu.Button className="">
+                      <ChatIcon className="h-7 w-7" aria-hidden="true" />
+                    </Menu.Button>
+                    <Transition
+                      as={Fragment}
+                      enter="transition ease-out duration-200"
+                      enterFrom="transform opacity-0 -translate-y-10"
+                      enterTo="transform opacity-100 translate-y-0"
+                      leave="transition ease-in duration-200"
+                      leaveFrom="transform opacity-100 translate-y-0"
+                      leaveTo="transform opacity-0 -translate-y-10"
+                    >
+                      <Menu.Items className="absolute right-0 mt-2 w-56  origin-top-right bg-white divide-y  rounded-md shadow-lg text-gray-700 min-w-max ">
+                        <span className="absolute -top-2 right-2 bg-white w-8 h-8 transform rotate-45"></span>
+                        <>
+                          <div className="rounded-lg">
+                            <Menu.Item>
+                              <a href="https://web.whatsapp.com/" target="_blank" rel="noreferrer" className="relative flex py-4 pl-9 gap-3 items-center hover:bg-gray-100 transition-all duration-300 rounded-lg ">
+                                <img className="w-7 h-7" src="/assets/icons/whatsapp.png" alt="" />
+                                <p className="  ">021-111-222-333</p>
+                              </a>
+                            </Menu.Item>
+                          </div>
+
+                          <div className="rounded-lg pr-4 hover:bg-gray-100 transition-all duration-300 ">
+                            <Menu.Item>
+                              <a href="https://www.google.com/" target="_blank" rel="noreferrer" className="relative flex py-4 pl-9 gap-3  items-center rounded-lg ">
+                                <img className="w-7 h-7" src="/assets/icons/gmail.png" alt="" />
+                                <p className="">support@dewetour.com</p>
+                              </a>
+                            </Menu.Item>
+                          </div>
+                        </>
+                      </Menu.Items>
+                    </Transition>
+                  </Menu>
+                )}
+              </>
             ) : (
               <></>
             )}

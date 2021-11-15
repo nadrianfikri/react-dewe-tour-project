@@ -13,6 +13,9 @@ import { useState, useEffect } from 'react';
 import { API } from '../config/api';
 
 function IncomeTrip() {
+  const title = 'Admin Income Trip';
+  document.title = 'Dewe Tour | ' + title;
+
   // init var for store data
   const [trips, setTrips] = useState([]);
   const [country, setCountry] = useState([]);

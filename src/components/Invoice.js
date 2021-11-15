@@ -10,31 +10,31 @@ function Invoice(props) {
     <>
       {/* box invoice */}
       <section className="flex justify-between items-center ">
-        <div>
+        <div className="w-28 md:w-auto">
           <img src="/assets/images/logo-dewe-black.png" alt="logo" />
         </div>
         <div className="text-right space-y-2">
-          <h1 className="font-bold text-4xl">Booking</h1>
-          <p className="text-gray-400 text-lg">{props.date}</p>
+          <h1 className="font-bold text-xl md:text-4xl">Booking</h1>
+          <p className="text-gray-400 text-xs md:text-lg">{props.date}</p>
         </div>
       </section>
-      <section className="flex justify-between items-center overflow-auto">
-        <div className="flex flex-col justify-between gap-8">
-          <div className="text-2xl font-bold">
-            <h1 className="lg:w-96">{props.title}</h1>
-            <p className="text-sm text-gray-400">{props.country}</p>
+      <section className="flex flex-col md:flex-row justify-between items-streach md:items-center gap-2 overflow-auto">
+        <div className="flex flex-col justify-between gap-2 md:gap-8">
+          <div className="text-md md:text-2xl font-bold overflow-hidden">
+            <h1 className=" lg:w-96 line-clamp-3">{props.title}</h1>
+            <p className="text-xs md:text-sm text-gray-400">{props.country}</p>
           </div>
-          <div className={`bg-${props.style}-100 text-${props.style}-400 p-2 rounded-md w-max`}>{props.status}</div>
+          <div className={`bg-${props.style}-100 text-${props.style}-400 p-2 rounded-md w-max text-xs md:text-lg`}>{props.status}</div>
         </div>
-        <div className="flex flex-col justify-between gap-8">
+        <div className="flex flex-row md:flex-col justify-between gap-8">
           <InfoTrip title="Data Trip" desc={props.date} />
-          <InfoTrip title="Accomodation" desc={props.accomodation} />
+          <InfoTrip title="Accomodation" desc={props.accomodation} align="text-right md:text-left" />
         </div>
-        <div className="flex flex-col justify-between gap-8">
+        <div className="flex flex-row md:flex-col justify-between gap-8">
           <InfoTrip title="Duration" desc={`${props.day} Day ${props.night} Night`} />
-          <InfoTrip title="Transportation" desc={props.transportation} />
+          <InfoTrip title="Transportation" desc={props.transportation} align="text-right md:text-left" />
         </div>
-        <div className="flex flex-col justify-between text-center gap-8">
+        <div className="flex flex-col items-center md:justify-between text-center gap-8">
           <UploadProof id={props.id} onChange={props.onChange} image={props.attachment} desc={props.proofDesc} disabled={props.disabled} />
         </div>
       </section>
@@ -54,9 +54,9 @@ function Invoice(props) {
 
 export function InfoTrip(props) {
   return (
-    <div className="info-trip">
-      <dt className="text-lg font-bold">{props.title}</dt>
-      <dd className="text-sm text-gray-400">{props.desc}</dd>
+    <div className={`info-trip ${props.align}`}>
+      <dt className="text-xs md:text-lg font-bold">{props.title}</dt>
+      <dd className="text-xs md:text-sm text-gray-400">{props.desc}</dd>
     </div>
   );
 }

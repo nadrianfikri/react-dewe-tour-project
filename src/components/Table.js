@@ -2,11 +2,11 @@ function Table2({ children }) {
   return <table className="table-auto text-left overflow-auto bg-white">{children}</table>;
 }
 function Table({ children }) {
-  return <table className="table-auto text-left overflow-auto">{children}</table>;
+  return <table className=" text-left table-auto w-800 md:w-auto overflow-auto">{children}</table>;
 }
 function TFoot(props) {
   return (
-    <tfoot className="font-bold ">
+    <tfoot className="font-bold text-xs md:text-lg">
       <tr>
         <td></td>
         <td></td>
@@ -43,7 +43,7 @@ function TData2(props) {
 
 function TData(props) {
   return (
-    <tr className="border-b border-grey-600 text-gray-400">
+    <tr className="border-b border-grey-600 text-gray-400 text-xs md:text-lg">
       <td>{props.no}</td>
       <td>{props.fullName}</td>
       <td>{props.email}</td>
@@ -60,7 +60,7 @@ function TBody({ children }) {
 
 function THeader(props) {
   return (
-    <thead className="border-b border-grey-600 ">
+    <thead className="border-b border-grey-600 text-xs md:text-lg">
       <tr>
         <th className="py-2 px-2">{props.col1}</th>
         <th>{props.col2}</th>

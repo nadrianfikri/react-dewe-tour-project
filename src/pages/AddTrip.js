@@ -3,7 +3,7 @@ import Footer from '../components/Footer';
 import Alert from '../components/Alert';
 import { Dialog, Transition } from '@headlessui/react';
 
-import { Form, FormGroup, TextArea, InputSubmit, InputImage, Select, Option, DoubleInput } from '../components/Form';
+import { Form, FormGroup, TextArea, InputImage, Select, Option, DoubleInput } from '../components/Form';
 
 import { useState, useEffect, Fragment } from 'react';
 import { useHistory } from 'react-router-dom';
