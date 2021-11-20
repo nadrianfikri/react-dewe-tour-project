@@ -51,6 +51,7 @@ function Navbar(props) {
     }
   }
 
+  // get data transaction from API
   const getData = async () => {
     try {
       const response = await API.get('/transaction');

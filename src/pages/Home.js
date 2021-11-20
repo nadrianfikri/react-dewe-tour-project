@@ -42,7 +42,7 @@ function Home() {
 
   // search fitur
   const filteredTrip = trips.filter((trip) => {
-    return trip.title.toLowerCase().includes(search) || trip.country.name.toLowerCase().includes(search) || trip.transportation.toLowerCase().includes(search);
+    return trip.title.toLowerCase().includes(search) || trip.country.name.toLowerCase().includes(search);
   });
 
   return (
