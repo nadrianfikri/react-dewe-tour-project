@@ -72,9 +72,6 @@ function App() {
             <SkeletonHome />
           </>
         ) : (
-          // <div className="flex h-screen justify-center items-center ">
-          //   <p className="animate-spin text-5xl">+</p>
-          // </div>
           <>
             {state.isLogin === false ? (
               <Switch>
